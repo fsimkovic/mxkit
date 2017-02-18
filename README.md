@@ -13,7 +13,7 @@ This will install the MrKit into your CCP4 installation.
 
 If you would like to install MrKit in development mode, execute the following:
 
-    git clone https://github.com/rigdenlab/MrKit.git
+    git clone https://github.com/rigdenlab/mrkit.git
     cd mrkit
     ccp4-python setup.py develop --prefix $CCP4
 
