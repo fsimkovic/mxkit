@@ -1,16 +1,16 @@
+"""Test module for mrkit.cli"""
 
 __author__ = "Felix Simkovic"
 __date__ = "01 Nov 2016"
 
-from cli import _GenericArgument
-from cli import Argument
-from cli import ArgumentList
-from cli import CommandLine
-from cli import Option
-from cli import OptionList
-from cli import Switch
-
 import unittest
+
+from mrkit.cli import _GenericArgument
+from mrkit.cli import Argument
+from mrkit.cli import ArgumentList
+from mrkit.cli import Option
+from mrkit.cli import OptionList
+from mrkit.cli import Switch
 
 
 class Test__GenericArgument(unittest.TestCase):
@@ -175,23 +175,6 @@ class Test_ArgumentList(unittest.TestCase):
             self.assertTrue(False)
         except TypeError:
             self.assertTrue(True)
-
-
-class Test_CommandLine(unittest.TestCase):
-
-    def test___init__(self):
-
-        class NewCli(CommandLine):
-            def __init__(self):
-                self.clflags = [
-                    Switch(['--on', 'onswitch'], 'on-switch'),
-                    Argument(['fname'], 'a file name')
-                ]
-                kwargs = {'onswitch': True, 'fname': 'foo_bar'}
-                super(NewCli, self).__init__('go', **kwargs)
-
-        cli = NewCli()
-        raise RuntimeError
 
 
 class Test_Option(unittest.TestCase):

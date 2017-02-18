@@ -20,7 +20,6 @@ import re
 __all__ = [
     'Argument',
     'ArgumentList',
-    'CommandLine',
     'Option',
     'OptionList',
     'Switch',
@@ -29,35 +28,6 @@ __all__ = [
 
 # Define some regular expressions here
 SPACE_QUOTE = re.compile(r'^\s*(".*")\s*$')
-
-
-class CommandLine(object):
-
-    def __init__(self, exe, **kwargs):
-        """Create a new command line wrapper"""
-        # Name of the executable
-        self.exe = exe
-
-        # Construct all possible command line flags
-        assert self.clflags, 'Define some Command Line flags first'
-        uniques = set()
-            
-        return
-
-    def __call__(self, stdin=None, stdout=None, stderr=None):
-        """Invoke the constructed command line
-
-        Parameters
-        ----------
-        stdin : str, optional
-           Text representing StdIn
-        stdout : str, optional
-           The path to a file for StdOut
-        stderr : str, optional
-           The path to a file for StdErr
-
-        """
-        return
 
 
 class _GenericArgument(object):
@@ -590,24 +560,4 @@ class Switch(_GenericArgument):
             return '{0} '.format(self.names[0])
         else:
             return ''
-
-
-
-if __name__ == "__main__":
-
-    switch = Switch(['--switch', 'test2'], 'This is a test switch')
-    option_list = OptionList(['-optionlist', 'test2'], 'This is a test option list', is_filename=True, is_required=True, equate=False)
-    option = Option(['-option', 'test2'], 'This is a test option', is_filename=False, is_required=True, equate=False)
-    argument = Argument(['-argument', 'test2'], 'This is a test argument', is_filename=True, is_required=True)
-    
-    switch.is_set = True
-    option_list.value = ['hello', 'wor ld', '"today"']
-    option_list.is_set = True
-    option.value = 5
-    option.is_set = True
-    argument.value = 'coocoo'
-    argument.is_set = True
-
-    print(''.join([__file__ + ' ', str(switch), str(option_list), str(option), str(argument)]))  
-    
 
