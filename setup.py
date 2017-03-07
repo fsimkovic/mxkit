@@ -1,4 +1,4 @@
-"""MrKit - Molecular Replacement ToolKit"""
+"""MbKit"""
 
 from setuptools import setup, find_packages
 from distutils.util import convert_path
@@ -7,7 +7,7 @@ import glob
 def get_version():
     # Credits to http://stackoverflow.com/a/24517154
     main_ns = {}
-    ver_path = convert_path('mrkit/_version.py')
+    ver_path = convert_path('mbkit/_version.py')
     with open(ver_path) as f_in:
         exec(f_in.read(), main_ns)
     return main_ns['__version__']
@@ -17,16 +17,16 @@ __version__ = get_version()
 
 # Do the actual setup below
 setup(
-    name='mrkit',
+    name='mbkit',
     description=__doc__.replace("\n", ""),
     long_description=open('README.md').read(),
     version=__version__,
     author='Felix Simkovic, Jens Thomas, Adam Simpkin & Ronan Keegan',
     author_email='felixsimkovic@me.com',
     license='BSD License',
-    url='https://github.com/rigdenlab/mrkit',
-    download_url='https://github.com/rigdenlab/mrkit/tarball/' + __version__,
-    package_dir={'mrkit': 'mrkit'},
+    url='https://github.com/rigdenlab/mbkit',
+    download_url='https://github.com/rigdenlab/mbkit/tarball/' + __version__,
+    package_dir={'mbkit': 'mbkit'},
     packages=find_packages(exclude="tests"),
     platforms=['Linux', 'Mac OS-X', 'Unix', 'Windows'],
     classifiers=[

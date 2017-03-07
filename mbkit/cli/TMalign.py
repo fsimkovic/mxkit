@@ -4,10 +4,10 @@ __author__ = "Felix Simkovic"
 __date__ = "20 Feb 2017"
 __version__ = "0.1"
 
-from mrkit.cli import AbstractCommandline
-from mrkit.cli import Argument
-from mrkit.cli import Option
-from mrkit.cli import Switch
+from mbkit.cli import AbstractCommandline
+from mbkit.cli import Argument
+from mbkit.cli import Option
+from mbkit.cli import Switch
 
 
 class TMalignCommandline(AbstractCommandline):
@@ -31,7 +31,7 @@ class TMalignCommandline(AbstractCommandline):
 
     Examples
     --------
-    >>> from mrkit.cli import TMalign
+    >>> from mbkit.cli import TMalign
     >>> tm_exe = TMalign.TMalignCommandline(chain1="model1.pdb", chain2="model2.pdb")
     >>> print(tm_exe)
     TMalign model1.pdb model2.pdb

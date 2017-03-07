@@ -141,7 +141,7 @@ class Worker(object):
 
         Parameters
         ----------
-        command : :obj:`AbstractCommandLine <mrkit.cli.AbstractCommandline>`
+        command : :obj:`AbstractCommandLine <mbkit.cli.AbstractCommandline>`
            Command to run
         stdin : str, optional
            Stdin for the command

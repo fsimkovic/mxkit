@@ -4,10 +4,10 @@ __author__ = "Felix Simkovic"
 __date__ = "07 Mar 2017"
 __version__ = 0.1
 
-from mrkit.cli import AbstractCommandline
-from mrkit.cli import Argument
-from mrkit.cli import Option
-from mrkit.cli import Switch
+from mbkit.cli import AbstractCommandline
+from mbkit.cli import Argument
+from mbkit.cli import Option
+from mbkit.cli import Switch
 
 
 class MolRepCommandline(AbstractCommandline):
@@ -23,7 +23,7 @@ class MolRepCommandline(AbstractCommandline):
     --------
 
     1. Run TM-score to compare 'model' and 'native':
-    >>> from mrkit.cli import TMscore
+    >>> from mbkit.cli import TMscore
     >>> tm_exe = TMscore.TMscoreCommandLine(
     ...     "/usr/bin/TMscore", model="model.pdb", native="native.pdb")
     >>> print(tm_exe)

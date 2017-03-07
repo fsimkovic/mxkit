@@ -4,9 +4,9 @@ __author__ = "Felix Simkovic"
 __date__ = "30 Aug 2016"
 __version__ = "0.1"
 
-from mrkit.cli import AbstractCommandline
-from mrkit.cli import Option
-from mrkit.cli import Switch
+from mbkit.cli import AbstractCommandline
+from mbkit.cli import Option
+from mbkit.cli import Switch
 
 
 class MaxclusterCommandline(AbstractCommandline):
@@ -25,7 +25,7 @@ class MaxclusterCommandline(AbstractCommandline):
     The first option to use maxcluster is to compare two structures,
     i.e. an experiment and predicted structure:
 
-    >>> from mrkit.cli import Maxcluster
+    >>> from mbkit.cli import Maxcluster
     >>> maxcluster_exe = Maxcluster.MaxclusterCommandline(pdb_experiment="experiment.pdb", pdb_prediction="model.pdb")
     >>> print(maxcluster_exe)
     maxcluster -e experiment.pdb -p model.pdb
@@ -35,7 +35,7 @@ class MaxclusterCommandline(AbstractCommandline):
     in an all vs all comparisons. Just provide the list file in case
     you wish to run such a comparison:
 
-    >>> from mrkit.cli import Maxcluster
+    >>> from mbkit.cli import Maxcluster
     >>> maxcluster_exe = Maxcluster.MaxclusterCommandline(pdb_list="models.list")
     >>> print(maxcluster_exe)
     maxcluster -l models.list
@@ -44,7 +44,7 @@ class MaxclusterCommandline(AbstractCommandline):
     Finally, if you wish to compare a list of models against a single
     experiment structure, you can use the following syntax to do just that:
 
-    >>> from mrkit.cli import Maxcluster
+    >>> from mbkit.cli import Maxcluster
     >>> maxcluster_exe = Maxcluster.MaxclusterCommandline(pdb_list="models.list", pdb_experiment='experiment.pdb')
     >>> print(maxcluster_exe)
     maxcluster -l models.list -e experiment.pdb
