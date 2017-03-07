@@ -1,5 +1,5 @@
 # MbKit
-Molecular Replacement ToolKit
+Molecular Biology ToolKit
 
 ### Installation
 
@@ -21,7 +21,7 @@ This will link this version into the root of your CCP4 installation. Therefore, 
 
 ### Testing
 
-    python setup.py test
+    ccp4-python setup.py test
 
 This command will collect all unittests and execute them.
 
