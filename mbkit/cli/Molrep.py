@@ -15,6 +15,12 @@ class MolrepCommandline(AbstractCommandline):
 
     Description
     -----------
+    Molrep [#]_ is an automated molecular replacement (MR) program for attempting to 
+    position a known structure in the unit cell of a target structure to attempt to give 
+    a first estimate of phases for the unknown target. Apart from the basic MR function it
+    has several additional features that can be used to assist the MR process. Molrep is 
+    part of the CCP4 software suite. CCP4 is needed for running this wrapper. It can be 
+    downloaded from www.ccp4.ac.uk.
 
     .. [#] A.Vagin, A.Teplyakov, MOLREP: an automated program for molecular replacement.,
        J. Appl. Cryst. (1997) 30, 1022-1025.
@@ -43,38 +49,68 @@ class MolrepCommandline(AbstractCommandline):
     >>> print(molrep_exe)
     /usr/bin/molrep -f data.mtz -m model.pdb -s sequence.fasta -po out/ -ps scr/
 
+    4. Run Molrep to do self rotation function:
+    >>> from mbkit.cli import Molrep
+    >>> molrep_exe = Molrep.MolrepCommandLine(
+    ...     "/usr/bin/molrep", hklin="data.mtz")
+    >>> print(molrep_exe)
+    /usr/bin/molrep -f data.mtz
 
+    5. Run Molrep to do multicopy search using one model:
+    >>> from mbkit.cli import Molrep
+    >>> molrep_exe = Molrep.MolrepCommandLine(
+    ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", xyzin2="model.pdb")
+    >>> print(molrep_exe)
+    /usr/bin/molrep -f data.mtz -m model.pdb -m2 model.pdb
 
- #     Self rotation funtion
- # molrep -f file.mtz
- #
- #     multi-copy search, one model
- # molrep -f file.mtz -m model.pdb -m2 model.pdb
- #
- #     multi-copy search, two models
- # molrep -f file.mtz -m model1.pdb -m2 model2.pdb
- #
- #     Fitting two atomic models
- # molrep -m model1.pdb -mx model2.pdb
- #
- #     Rigid body refinement
- # molrep -f file.mtz  -mx model.pdb
- #
- #     Using keywords from file
- # molrep -f fobs.mtz -m model.pdb -k file_keywords
- #
- #     Using keywords interactivly: fitting a model to EM map
- # molrep -f em.map  -m model.pdb -i <CR>
- # nmon 4 <CR>
- # <CR>
- #
+    6. Run Molrep to do multicopy search using two models:
+    >>> from mbkit.cli import Molrep
+    >>> molrep_exe = Molrep.MolrepCommandLine(
+    ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", xyzin2="model2.pdb")
+    >>> print(molrep_exe)
+    /usr/bin/molrep -f data.mtz -m model.pdb -m2 model2.pdb
 
+    7. Run Molrep to fit two atomic models:
+    >>> from mbkit.cli import Molrep
+    >>> molrep_exe = Molrep.MolrepCommandLine(
+    ...     "/usr/bin/molrep", xyzin="model.pdb", fixed_xyzin="model2.pdb")
+    >>> print(molrep_exe)
+    /usr/bin/molrep -m model.pdb -mx model2.pdb
 
+    8. Run Molrep to rigid body refinement:
+    >>> from mbkit.cli import Molrep
+    >>> molrep_exe = Molrep.MolrepCommandLine(
+    ...     "/usr/bin/molrep", hklin="data.mtz", fixed_xyzin="model2.pdb")
+    >>> print(molrep_exe)
+    /usr/bin/molrep -f data.mtz -mx model.pdb
+
+    9. Run Molrep to do basic MR (RF + TF) with keyword file input:
+    >>> from mbkit.cli import Molrep
+    >>> molrep_exe = Molrep.MolrepCommandLine(
+    ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", keyin="keywords.txt")
+    >>> print(molrep_exe)
+    /usr/bin/molrep -f data.mtz -m model.pdb -k keywords.txt
+
+    10. Run Molrep to fit model to EM map:
+    >>> from mbkit.cli import Molrep
+    >>> molrep_exe = Molrep.MolrepCommandLine(
+    ...     "/usr/bin/molrep", hklin="em.map", xyzin="model.pdb")
+    >>> print(molrep_exe)
+    /usr/bin/molrep -f em.map -m model.pdb 
+
+    11. Run Molrep to do basic molecular replacement (RF + TF) with input through stdin:
+    >>> from mbkit.cli import Molrep
+    >>> molrep_exe = Molrep.MolrepCommandLine(
+    ...     "/usr/bin/molrep", interactive=True, hklin="data.mtz", xyzin="model.pdb")
+    >>> print(molrep_exe)
+    /usr/bin/molrep -f data.mtz -m model.pdb -i
 
     """
     def __init__(self, cmd='molrep', **kwargs):
         self.parameters = [
             Switch(['-h', 'help'],
+                   ''),
+            Switch(['-i', 'interactive'],
                    ''),
 
             Option(['-f', 'hklin'],
@@ -97,18 +133,20 @@ class MolrepCommandline(AbstractCommandline):
                    '',
                    equate=False,
                    filename=True),
+            Option(['-s2', 'seqin2'],
+                   '',
+                   equate=False,
+                   filename=True),
             Option(['-k', 'keyin'],
                    '',
                    equate=False,
                    filename=True),
             Option(['-po', 'outDir'],
                    '',
-                   equate=False,
-                   dirname=True),
+                   equate=False),
             Option(['-ps', 'outScr'],
                    '',
-                   equate=False,
-                   dirname=True),
+                   equate=False),
 
             #Argument(['model'],
             #         "Input model structure",
