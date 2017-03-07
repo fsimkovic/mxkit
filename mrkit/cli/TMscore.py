@@ -2,7 +2,7 @@
 
 __author__ = "Felix Simkovic"
 __date__ = "20 Feb 2017"
-__version__ = 0.1
+__version__ = "0.1"
 
 from mrkit.cli import AbstractCommandline
 from mrkit.cli import Argument
