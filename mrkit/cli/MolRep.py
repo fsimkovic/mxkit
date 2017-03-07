@@ -1,7 +1,7 @@
 """Python wrapper module for the MolRep binary"""
 
 __author__ = "Felix Simkovic"
-__date__ = "20 Feb 2017"
+__date__ = "07 Mar 2017"
 __version__ = 0.1
 
 from mrkit.cli import AbstractCommandline
