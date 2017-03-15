@@ -22,38 +22,12 @@ class RefmacCommandline(AbstractCommandline):
 
     Examples
     --------
-    1. Restrained refinement with overall B-factor refinement. Method is sparse matrix method.
+    1. Run Refmac (note: The command line is constant and the stdin options control how Refmac is run):
     >>> from mbkit.cli import Refmac
-
-    2. Unrestrained refinement by maximum likelihood method
-    >>> from mbkit.cli import Refmac
-
-    3. Idealization. Method of minimization is conjugate gradient method.
-    >>> from mbkit.cli import Refmac
-
-    4. Restrained refinement with partial contribution from hydrogens.
-    >>> from mbkit.cli import Refmac
-
-    5. Restrained refinement with maximum likelihood method etc. 3 angstrom data requires fixing of protein and
-    Babinet's BULK B value. In these cases it is better to use TLS refinement before individual atomic refinement.
-    >>> from mbkit.cli import Refmac
-
-    6a. Example of rigid body refinement in refmac. Ordinary case with several domains.
-    >>> from mbkit.cli import Refmac
-
-    6b. Same problem but now using experimental phases.
-    >>> from mbkit.cli import Refmac
-
-    7. Example of using experimental phase information. Very bad model (RMS error 2 angstroms)
-    >>> from mbkit.cli import Refmac
-
-    8. Example of refinement of individual anisotropic B values. Hydrogens must be included. They will be used for
-    geometry gradient and second derivatives and structure factor calculatation. But they do not contribute to X-ray
-    gradients and second derivatives.
-    >>> from mbkit.cli import Refmac
-
-    9. Example of TLS refinement prior to individual isotropic B value and positional parameters.
-    >>> from mbkit.cli import Refmac
+    >>> refmac_exe = Refmac.RefmacCommandline(
+    ...     "/usr/bin/refmac5", hklin="data.mtz", hklout="name.mtz", xyzin="data.pdb", xyzout="name.pdb")
+    >>> print(refmac_exe)
+    /usr/bin/refmac5 HKLIN data.mtz HKLOUT name.mtz XYZIN data.pdb XYZOUT name.pdb
     """
 
     def __init__(self, cmd='refmac5', **kwargs):
@@ -81,6 +55,7 @@ class RefmacCommandline(AbstractCommandline):
                    filename=True),
             ]
 
+        # THIS IS TEMPORARY
         self.stdin = [
             # Principal X-ray keywords
             Argument(['LABIN'],
