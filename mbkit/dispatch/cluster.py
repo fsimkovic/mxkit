@@ -18,7 +18,7 @@ class _Platform(object):
     pass
 
 
-class LoadSharingFacility(_Platform):
+class _LoadSharingFacility(_Platform):
     """Object ot handle the Load Sharing Facility (LSF) management platform
     
     Warnings
