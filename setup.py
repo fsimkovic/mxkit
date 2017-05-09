@@ -92,7 +92,6 @@ setup(
     packages=PACKAGES,
     package_dir={PACKAGE_NAME: PACKAGE_DIR},
     install_requires=DEPENDENCIES,
-    scripts=SCRIPTS,
     platforms=PLATFORMS,
     classifiers=CLASSIFIERS,
     test_suite='nose.collector',

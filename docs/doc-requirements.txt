@@ -1,0 +1,9 @@
+# The requirements needed by MbKit
+#
+# You can install all dependencies in one go:
+#     pip install -r doc-requirements.txt
+#
+sphinx
+sphinx-autobuild
+sphinx_bootstrap_theme
+numpydoc
