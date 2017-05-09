@@ -1,43 +1,100 @@
-"""MbKit"""
+"""Molecular Biology ToolKit"""
 
-from setuptools import setup, find_packages
 from distutils.util import convert_path
-import glob
+from setuptools import setup
 
-def get_version():
+import os
+import sys
+
+# ==============================================================
+# Functions, functions, functions ...
+# ==============================================================
+
+def dependencies():
+    with open('requirements.txt', 'r') as f_in:
+        return [l for l in f_in.read().rsplit(os.linesep) 
+                if l and not l.startswith("#")]
+
+
+def readme():
+    with open('README.rst', 'r') as f_in:
+        return f_in.read()
+
+
+def version():
     # Credits to http://stackoverflow.com/a/24517154
     main_ns = {}
-    ver_path = convert_path('mbkit/_version.py')
+    ver_path = convert_path('mbkit/version.py')
     with open(ver_path) as f_in:
         exec(f_in.read(), main_ns)
     return main_ns['__version__']
 
-# Obtain the current version of ConKit
-__version__ = get_version()
+# ==============================================================
+# Determine the Python executable
+# ==============================================================
+PYTHON_EXE = None
+for arg in sys.argv:
+    if arg[0:20] == "--script-python-path" and len(arg) == 20:
+        option, value = arg, sys.argv[sys.argv.index(arg) + 1]
+        PYTHON_EXE = value
+    elif arg[0:20] == "--script-python-path" and arg[20] == "=":
+        option, value = arg[:20], arg[21:]
+        PYTHON_EXE = value
+
+if not PYTHON_EXE:
+    PYTHON_EXE = sys.executable
+
+
+# ==============================================================
+# Define all the relevant options
+# ==============================================================
+AUTHOR = "Felix Simkovic"
+AUTHOR_EMAIL = "felixsimkovic@me.com"
+DESCRIPTION = __doc__.replace("\n", "")
+DEPENDENCIES = dependencies()
+LICENSE = "BSD License"
+LONG_DESCRIPTION = readme()
+PACKAGE_DIR = "mbkit"
+PACKAGE_NAME = "mbkit"
+PLATFORMS = ['POSIX', 'Mac OS', 'Windows', 'Unix']
+URL = "http://mbkit.rtfd.org"
+VERSION = version()
+
+PACKAGES = [
+    'mbkit', 
+    'mbkit/apps',
+    'mbkit/dispatch',
+]
+
+CLASSIFIERS = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3.4",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
 
 # Do the actual setup below
 setup(
-    name='mbkit',
-    description=__doc__.replace("\n", ""),
-    long_description=open('README.md').read(),
-    version=__version__,
-    author='Felix Simkovic, Jens Thomas, Adam Simpkin & Ronan Keegan',
-    author_email='felixsimkovic@me.com',
-    license='BSD License',
-    url='https://github.com/rigdenlab/mbkit',
-    download_url='https://github.com/rigdenlab/mbkit/tarball/' + __version__,
-    package_dir={'mbkit': 'mbkit'},
-    packages=find_packages(exclude="tests"),
-    platforms=['Linux', 'Mac OS-X', 'Unix', 'Windows'],
-    classifiers=[
-        "Development Status :: 4 - Beta",
-        "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: BSD License",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2.7",
-        "Topic :: Scientific/Engineering :: Bio-Informatics",
-    ],
+    author=AUTHOR,
+    author_email=AUTHOR_EMAIL,
+    name=PACKAGE_NAME,
+    description=DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
+    license=LICENSE,
+    version=VERSION,
+    url=URL,
+    packages=PACKAGES,
+    package_dir={PACKAGE_NAME: PACKAGE_DIR},
+    install_requires=DEPENDENCIES,
+    scripts=SCRIPTS,
+    platforms=PLATFORMS,
+    classifiers=CLASSIFIERS,
     test_suite='nose.collector',
     tests_require=['nose >=1.3.7'],
     include_package_data=True,

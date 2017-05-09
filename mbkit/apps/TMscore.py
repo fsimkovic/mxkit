@@ -4,10 +4,10 @@ __author__ = "Felix Simkovic"
 __date__ = "20 Feb 2017"
 __version__ = "0.1"
 
-from mbkit.cli import AbstractCommandline
-from mbkit.cli import Argument
-from mbkit.cli import Option
-from mbkit.cli import Switch
+from mbkit.apps import AbstractCommandline
+from mbkit.apps import Argument
+from mbkit.apps import Option
+from mbkit.apps import Switch
 
 
 class TMscoreCommandline(AbstractCommandline):
@@ -31,28 +31,28 @@ class TMscoreCommandline(AbstractCommandline):
     --------
 
     1. Run TM-score to compare 'model' and 'native':
-    >>> from mbkit.cli import TMscore
+    >>> from mbkit.apps import TMscore
     >>> tm_exe = TMscore.TMscoreCommandline(
     ...     "/usr/bin/TMscore", model="model.pdb", native="native.pdb")
     >>> print(tm_exe)
     /usr/bin/TMscore model.pdb native.pdb
 
      2. Run TM-score to compare two complex structures with multiple chains
-     >>> from mbkit.cli import TMscore
+     >>> from mbkit.apps import TMscore
      >>> tm_exe = TMscore.TMscoreCommandline(
      ...     "/usr/bin/TMscore", complex=True, model="model.pdb", native="native.pdb")
      >>> print(tm_exe)
     /usr/bin/TMscore -c model.pdb native.pdb
 
      3. TM-score normalized with an assigned scale d0 e.g. 5 A
-     >>> from mbkit.cli import TMscore
+     >>> from mbkit.apps import TMscore
      >>> tm_exe = TMscore.TMscoreCommandline(
      ...     "/usr/bin/TMscore", norm_scale=5, model="model.pdb", native="native.pdb")
      >>> print(tm_exe)
      /usr/bin/TMscore model native -d 5
 
      4. TM-score normalized by a specific length, e.g. 120 AA
-     >>> from mbkit.cli import TMscore
+     >>> from mbkit.apps import TMscore
      >>> tm_exe = TMscore.TMscoreCommandline(
      ...     "/usr/bin/TMscore", norm_length=5, model="model.pdb", native="native.pdb")
      >>> print(tm_exe)

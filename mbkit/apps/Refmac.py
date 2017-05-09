@@ -2,12 +2,13 @@
 
 __author__ = "Adam Simpkin"
 __date__ = "15 Mar 2017"
-__version__ = 0.1
+__version__ = "0.1"
 
-from mbkit.cli import AbstractCommandline
-from mbkit.cli import Argument
-from mbkit.cli import Option
-from mbkit.cli import Switch
+from mbkit.apps import AbstractCommandline
+from mbkit.apps import Argument
+from mbkit.apps import Option
+from mbkit.apps import Switch
+
 
 class RefmacCommandline(AbstractCommandline):
     """Python wrapper for the Refmac [#]_ binary
@@ -23,7 +24,7 @@ class RefmacCommandline(AbstractCommandline):
     Examples
     --------
     1. Run Refmac (note: The command line is constant and the stdin options control how Refmac is run):
-    >>> from mbkit.cli import Refmac
+    >>> from mbkit.apps import Refmac
     >>> refmac_exe = Refmac.RefmacCommandline(
     ...     "/usr/bin/refmac5", hklin="data.mtz", hklout="name.mtz", xyzin="data.pdb", xyzout="name.pdb")
     >>> print(refmac_exe)

@@ -1,0 +1,9 @@
+# This file contains MbKit's requirements
+#
+# These can be installed using the following
+# command:
+#       pip install -r requirements.txt
+
+setuptools
+biopython >=1.64
+

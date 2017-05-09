@@ -2,6 +2,6 @@
 Some fancy description
 """
 
-from mbkit import _version
+from mbkit import version
 
-__version__ = _version.__version__
+__version__ = version.__version__

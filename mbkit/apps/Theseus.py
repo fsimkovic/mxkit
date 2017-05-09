@@ -2,12 +2,12 @@
 
 __author__ = "Felix Simkovic"
 __date__ = "28 Aug 2016"
-__version__ = 0.1
+__version__ = "0.1"
 
-from mbkit.cli import AbstractCommandline
-from mbkit.cli import ArgumentList
-from mbkit.cli import Option
-from mbkit.cli import Switch
+from mbkit.apps import AbstractCommandline
+from mbkit.apps import ArgumentList
+from mbkit.apps import Option
+from mbkit.apps import Switch
 
 
 class TheseusCommandline(AbstractCommandline):
@@ -24,7 +24,7 @@ class TheseusCommandline(AbstractCommandline):
     Examples
     --------
 
-    >>> from mbkit.cli import Theseus
+    >>> from mbkit.apps import Theseus
     >>> theseus_exe = Theseus.TheseusCommandline(pdb_files="model1.pdb model2.pdb model3.pdb")
     >>> print(theseus_exe)
     theseus model1.pdb model2.pdb model3.pdb

@@ -9,9 +9,9 @@ appropriate error handling.
 
 from __future__ import print_function
 
-__author__ = "Felix Simkovic & Jens Thomas"
+__author__ = "Felix Simkovic"
 __date__ = "20 Feb 2017"
-__version__ = 0.1
+__version__ = "0.1"
 
 from Bio.Application import AbstractCommandline
 from Bio.Application import _Argument
@@ -21,8 +21,13 @@ from Bio.Application import _Switch
 from Bio.Application import _escape_filename
 
 import os
-import subprocess
-import tempfile
+import sys
+
+# OS-dependent script headers and extensions
+if sys.platform.startswith('win'):
+    SCRIPT_HEADER, SCRIPT_EXE = '', '.bat'
+else:
+    SCRIPT_HEADER, SCRIPT_EXE = '#!/bin/bash', '.sh'
 
 
 class AbstractCommandline(AbstractCommandline):
@@ -30,13 +35,12 @@ class AbstractCommandline(AbstractCommandline):
 
     def __init__(self, cmd, **kwargs):
         """Initialise a new :obj:`AbstractCommandline`"""
-        # Check if the executable is available
         cmd = AbstractCommandline.find_exec(cmd)
         super(AbstractCommandline, self).__init__(cmd, **kwargs)
 
     def __call__(self, *args, **kwargs):
         """Overwrite parent __call__"""
-        raise AttributeError("Execution of AbstractCommandline made unavailable")
+        raise AttributeError("Execution of {0} disabled".format(self.__class__.__name__))
 
     def _as_list(self):
         """Return the command line as list"""
@@ -47,6 +51,18 @@ class AbstractCommandline(AbstractCommandline):
                 commandline.extend(parameter._as_list())
         return commandline
 
+    def _as_script(self, f):
+        """Write the command line to a script
+
+        Parameters
+        ----------
+        f : str
+           The path to the file
+
+        """
+        with open(f, 'w') as f_out:
+            f_out.write(SCRIPT_HEADER + os.linesep)
+            f_out.write(str(self) + os.linesep)
 
     @staticmethod
     def find_exec(program, dirs=None):
@@ -126,67 +142,3 @@ class Switch(_Switch):
         else:
             return []
 
-
-# ========================================================================================================
-
-
-class Worker(object):
-    """Worker responsible for job execution
-
-    """
-
-    @staticmethod
-    def run_command(command, logfile=None, directory=None, stdin=None, **kwargs):
-        """Execute a command and return the exit code.
-
-        Parameters
-        ----------
-        command : :obj:`AbstractCommandLine <mbkit.cli.AbstractCommandline>`
-           Command to run
-        stdin : str, optional
-           Stdin for the command
-        logfile : str, optional
-           The path to the logfile
-        directory : str, optional
-           The directory to run the job in (cwd assumed)
-
-        Returns
-        -------
-        returncode : int
-           Subprocess exit code
-
-        """
-        if not isinstance(command, AbstractCommandline):
-            msg = "Input command needs to be AbstractCommandline"
-            raise TypeError(msg)
-
-        if not directory:
-            directory = os.getcwd()
-
-        if logfile:
-            if type(logfile) == file:
-                logf = logfile
-            else:
-                logf = open(os.path.abspath(logfile), "w")
-        else:
-            logf = tempfile.NamedTemporaryFile(delete=False)
-
-        if stdin != None:
-            stdinstr = stdin
-            stdin = subprocess.PIPE
-
-        # Windows needs some special treatment
-        if os.name == "nt":
-            kwargs.update({'bufsize': 0, 'shell': "False"})
-
-        p = subprocess.Popen(command._as_list(), stdin=stdin, stdout=logf,
-                             stderr=subprocess.STDOUT, cwd=directory, **kwargs)
-
-        if stdin != None:
-            p.stdin.write(stdinstr)
-            p.stdin.close()
-
-        p.wait()
-        logf.close()
-
-        return p.returncode

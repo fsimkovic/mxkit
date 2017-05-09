@@ -4,9 +4,9 @@ __author__ = "Felix Simkovic"
 __date__ = "28 Aug 2016"
 __version__ = "0.1"
 
-from mbkit.cli import AbstractCommandline
-from mbkit.cli import Argument
-from mbkit.cli import ArgumentList
+from mbkit.apps import AbstractCommandline
+from mbkit.apps import Argument
+from mbkit.apps import ArgumentList
 
 
 class SpickerCommandline(AbstractCommandline):
@@ -21,7 +21,7 @@ class SpickerCommandline(AbstractCommandline):
     Examples
     --------
 
-    >>> from mbkit.cli import Spicker
+    >>> from mbkit.apps import Spicker
     >>> spicker_exe = Spicker.SpickerCommandline(rmsinp='rmsinp', seqdat='seqdat', train='tra.in', reptra=['rep1.tra1'])
     >>> print(spicker_exe)
     spicker rmsinp seq.dat tra.in rep1.tra1
