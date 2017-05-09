@@ -13,7 +13,7 @@ import sys
 logger = logging.getLogger(__name__)
 
 
-def cexec(cmd, directory=None, permit_nonzero=False):
+def cexec(cmd, directory=None, stdin="", permit_nonzero=False):
     """Execute a command
 
     Parameters
@@ -22,6 +22,8 @@ def cexec(cmd, directory=None, permit_nonzero=False):
        The command to call
     directory : str, optional
        The directory to execute the job in
+    stdin : str, optional
+       Additional keywords provided to the command
     permit_nonzero : bool, optional
        Allow non-zero return codes [default: False]
     
@@ -38,8 +40,10 @@ def cexec(cmd, directory=None, permit_nonzero=False):
     """
     try:
         logger.debug("Executing '%s'", " ".join(cmd))
-        p = subprocess.Popen(cmd, cwd=directory, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
-        (stdout, stderr) = p.communicate()
+        p = subprocess.Popen(cmd, cwd=directory, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+        if stdin is not None:
+            p.stdin.write(stdin)
+        stdout, _ = p.communicate()
         if p.returncode == 0 or permit_nonzero:
             return stdout.strip()
         else:

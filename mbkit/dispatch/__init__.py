@@ -10,15 +10,15 @@ import mbkit.dispatch.cluster
 import mbkit.dispatch.local
 
 
-def submit_job(script, queue, *args, **kwargs):
+def submit_job(script, qtype, *args, **kwargs):
     """SOME FANCY TEXT
     
     Parameters
     ----------
     script : list
        A list of one or more scripts with absolute paths
-    queue : str
-       The queue to submit the jobs to [ sge | local ]
+    qtype : str
+       The queue type to submit the jobs to [ local | sge ]
 
     Returns
     -------
@@ -32,7 +32,7 @@ def submit_job(script, queue, *args, **kwargs):
     ValueError
        One or more scripts are not executable
     ValueError
-       Unknown queue provided
+       Unknown queue type provided
 
     """
     if not('directory' in kwargs and kwargs['directory']):
@@ -44,10 +44,10 @@ def submit_job(script, queue, *args, **kwargs):
     elif not all(os.access(fpath, os.X_OK) for fpath in script):
         raise ValueError("One or more scripts are not executable")
     # Submit the job to the corresponding queue
-    if queue == "local":
+    if qtype == "local":
         mbkit.dispatch.local.LocalJobServer.sub(script, **kwargs)
 
-    elif queue == "sge":
+    elif qtype == "sge":
         # Array job - deal with it
         if len(script) > 1:
             array = (1, len(script), len(script))

@@ -28,7 +28,7 @@ class LoadSharingFacility(_Platform):
 
     """
 
-    def bsub(command, array=None, deps=None, directory=None, log=None, name=None, pe_opts=None, priority=None, queue=None, shell=None, time=None):
+    def bsub(command, array=None, deps=None, directory=None, log=None, name=None, pe_opts=None, priority=None, queue=None, shell=None, time=None, *args, **kwargs):
         """Submit a job to the LSF queue
 
         Parameters
@@ -133,7 +133,7 @@ class SunGridEngine(_Platform):
     """Object to handle the Sun Grid Engine (SGE) management platform"""
     
     @staticmethod
-    def qsub(command, array=None, deps=None, directory=None, log=None, name=None, pe_opts=None, priority=None, queue=None, shell=None, time=None):
+    def qsub(command, array=None, deps=None, directory=None, log=None, name=None, pe_opts=None, priority=None, queue=None, shell=None, time=None, *args, **kwargs):
         """Submit a job to the SGE queue
 
         Parameters

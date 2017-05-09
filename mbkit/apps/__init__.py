@@ -22,12 +22,13 @@ from Bio.Application import _escape_filename
 
 import os
 import sys
+import tempfile
 
 # OS-dependent script headers and extensions
 if sys.platform.startswith('win'):
-    SCRIPT_HEADER, SCRIPT_EXE = '', '.bat'
+    EXE_EXT, SCRIPT_HEADER, SCRIPT_EXT = ('.exe', '', '.bat')
 else:
-    SCRIPT_HEADER, SCRIPT_EXE = '#!/bin/bash', '.sh'
+    EXE_EXT, SCRIPT_HEADER, SCRIPT_EXT = ('', '#!/bin/bash', '.sh')
 
 
 class AbstractCommandline(AbstractCommandline):
@@ -141,4 +142,41 @@ class Switch(_Switch):
             return [self.names[0]]
         else:
             return []
+
+
+def make_script(cmd, directory=None, prefix=None):
+    """Create an executable script
+
+    Parameters
+    ----------
+    cmd : list
+       The command to be written to the script. This can be a 1-dimensional 
+       or 2-dimensional list, depending on the commands to run.
+    directory : str, optional
+       The directory to create the script in
+    name : str, optional
+       The script prefix
+
+    Returns
+    -------
+    str
+       The path to the script
+
+    """
+    if directory is None:
+        directory = os.getcwd()
+    else:
+        directory = os.path.abspath(directory)
+    if prefix is None:
+        prefix = "mbkit_"
+    script = tempfile.NamedTemporaryFile(dir=directory, delete=False, prefix=prefix, suffix=SCRIPT_EXT).name
+    with open(script, 'w') as f_out:
+        f_out.write(SCRIPT_HEADER + os.linesep)
+        if isinstance(cmd, list) and isinstance(cmd[0], list):
+            for c in cmd:
+                f_out.write(' '.join(map(str, c)) + os.linesep)
+        elif isinstance(cmd, list):
+            f_out.write(' '.join(map(str, cmd)) + os.linesep)
+    os.chmod(script, 0o777)
+    return script
 

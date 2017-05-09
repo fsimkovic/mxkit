@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class _Worker(multiprocessing.Process):
     """Simple manual worker class to execute jobs in the queue"""
 
-    def __init__(self, queue, check_success=None, directory=None):
+    def __init__(self, queue, check_success=None, directory=None, permit_nonzero=False):
         """Instantiate a new worker
 
         Parameters
@@ -28,11 +28,14 @@ class _Worker(multiprocessing.Process):
            A callable function to check the success of a job
         directory : str, optional
            The directory to execute the jobs in
+        permit_nonzero : bool, optional
+           Allow non-zero return codes [default: False]
 
         """
         super(_Worker, self).__init__()
         self.check_success = check_success
         self.directory = directory
+        self.permit_nonzero = permit_nonzero
         self.queue = queue
 
     def run(self):
@@ -40,7 +43,7 @@ class _Worker(multiprocessing.Process):
         for job in iter(self.queue.get, None):
             if job is not None:
                 logger.debug("Worker %s running job %s", multiprocessing.current_process().name, job)
-                stdout = cexectools.cexec([job], directory=self.directory)
+                stdout = cexectools.cexec([job], directory=self.directory, permit_nonzero=self.permit_nonzero)
                 with open(job.rsplit('.', 1)[0] + '.log', 'w') as f_out:
                     f_out.write(stdout)
                 logger.debug("Worker %s running job %s finished", multiprocessing.current_process().name, job)
@@ -59,8 +62,8 @@ class LocalJobServer(object):
     """A local server to execute jobs via the multiprocessing module"""
 
     @staticmethod
-    def sub(command, check_success=None, directory=None, nproc=1, time=None):
-        """SOME FANCY TEXT
+    def sub(command, check_success=None, directory=None, nproc=1, permit_nonzero=False, time=None, *args, **kwargs):
+        """Submission function for local job submission via ``multiprocessing``
         
         Parameters
         ----------
@@ -72,6 +75,8 @@ class LocalJobServer(object):
            The directory to execute the jobs in
         nproc : int, optional
            The number of processors to use
+        permit_nonzero : bool, optional
+           Allow non-zero return codes [default: False]
         time : int, optional
            The maximum runtime of the job in seconds
 
@@ -90,7 +95,7 @@ class LocalJobServer(object):
         # Create workers equivalent to the number of jobs
         processes = []
         for _ in range(nproc):
-            p = _Worker(queue, check_success=check_success, directory=directory)
+            p = _Worker(queue, check_success=check_success, directory=directory, permit_nonzero=permit_nonzero)
             p.start()
             processes.append(p)
         # Add each command to the queue
