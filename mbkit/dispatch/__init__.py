@@ -56,7 +56,7 @@ def submit_job(script, qtype, *args, **kwargs):
             with open(array_jobs, 'w') as f_out:
                 f_out.write(os.linesep.join(script))
             # Create a array.scripts file used to execute the array
-            array_script = os.path.join(kwarks['directory'], "array.script")
+            array_script = os.path.join(kwargs['directory'], "array.script")
             with open(array_script, 'w') as f_out:
                 f_out.write(os.linesep.join([
                     "#!/bin/sh", 
