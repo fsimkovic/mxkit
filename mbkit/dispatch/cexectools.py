@@ -40,7 +40,8 @@ def cexec(cmd, directory=None, stdin="", permit_nonzero=False):
     """
     try:
         logger.debug("Executing '%s'", " ".join(cmd))
-        p = subprocess.Popen(cmd, cwd=directory, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+        kwargs = {"bufsize":0, "shell":"False"} if os.name == "nt" else {}
+        p = subprocess.Popen(cmd, cwd=directory, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, **kwargs)
         if stdin is not None:
             p.stdin.write(stdin)
         stdout, _ = p.communicate()

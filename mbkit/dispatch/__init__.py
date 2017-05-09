@@ -36,7 +36,7 @@ def submit_job(script, qtype, *args, **kwargs):
 
     """
     if not('directory' in kwargs and kwargs['directory']):
-        kwargs['directory'] = directory = os.getcwd()
+        kwargs['directory'] = os.getcwd()
 
     # Quick check if all scripts are sound
     if not all(os.path.isfile(fpath) for fpath in script):
@@ -52,11 +52,11 @@ def submit_job(script, qtype, *args, **kwargs):
         if len(script) > 1:
             array = (1, len(script), len(script))
             # Write all jobs into an array.jobs file
-            array_jobs = os.path.join(directory, 'array.jobs')
+            array_jobs = os.path.join(kwargs['directory'], 'array.jobs')
             with open(array_jobs, 'w') as f_out:
                 f_out.write(os.linesep.join(script))
             # Create a array.scripts file used to execute the array
-            array_script = os.path.join(directory, "array.script")
+            array_script = os.path.join(kwarks['directory'], "array.script")
             with open(array_script, 'w') as f_out:
                 f_out.write(os.linesep.join([
                     "#!/bin/sh", 
