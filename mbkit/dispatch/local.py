@@ -55,7 +55,49 @@ class Worker(multiprocessing.Process):
     
 
 class LocalJobServer(object):
-    """A local server to execute jobs via the multiprocessing module"""
+    """A local server to execute jobs via the multiprocessing module
+    
+    Examples
+    --------
+
+    The most basic example of a :obj:`LocalJobServer` is to run scripts across one or
+    more processors on a local machine. This can be achieved with the following example.
+
+    >>> from mbkit.apps import make_python_script
+    >>> from mbkit.dispatch.local import LocalJobServer
+    >>> scripts = [
+    ...     make_python_script(["import sys;", "print('hello');", "sys.exit(0);"])
+    ...     for _ in range(3)
+    ... ]
+    >>> LocalJobServer.sub(scripts, nproc=2)
+
+    This will create three Python script files and execute them by calling :func:`LocalJobServer.sub()`. 
+    
+    Sometimes you might want to submit many jobs where you know that some are going to fail. In this 
+    case, you can also use the :obj:`LocalJobServer` and provide the ``permit_nonzero`` keyword argument,
+    which will allow non-zero return codes from commands.
+
+    If you you intend to submit jobs, and want to terminate execution prematurely because you are only
+    interested in one job succeeding, you can provide a function handle via the ``check_success`` keyword.
+
+    >>> from mbkit.apps import make_python_script
+    >>> from mbkit.dispatch.local import LocalJobServer
+    >>> def succ_func(j):
+    ...     with open(j.rsplit('.', 1)[0] + '.log') as f_in:
+    ...         lines = f_in.readlines()
+    ...     return any("job 3" in l for l in lines)
+    >>> scripts = [
+    ...     make_python_script(["import sys;", "print('job {0}');".format(i), "sys.exit(0);"])
+    ...     for i in range(5)
+    ... ]
+    >>> LocalJobServer.sub(scripts, nproc=2, check_success=succ_func)
+
+    In this example, we create and provde the :func:`succ_func()` to the :func:`LocalJobServer.sub()` call.
+    As jobs are executed, each worker checks if that particular job was successful via :func:`succ_func()`,
+    and if so the entire execution process will terminate. *Note, only log files for the executed jobs will 
+    be created.*
+
+    """
 
     @staticmethod
     def sub(command, check_success=None, directory=None, nproc=1, permit_nonzero=False, time=None, *args, **kwargs):
