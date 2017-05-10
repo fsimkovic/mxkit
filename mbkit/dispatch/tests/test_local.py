@@ -42,10 +42,10 @@ class TestLocalJobServer(unittest.TestCase):
      
     def test_sub_3(self):
         def _checker(j):
-            for line in open(j.rsplit('.', 1)[0] + '.log', 'r'):
-                if "the special one" in line:
-                    return True
-            return False
+            with open(j.rsplit('.', 1)[0] + '.log', 'r') as f_in:
+                lines = f_in.readlines()
+            return any(l.find("the special one") for l in lines)
+
         jobs = [
             mbkit.apps.make_python_script([
                 ["import sys, time"], 

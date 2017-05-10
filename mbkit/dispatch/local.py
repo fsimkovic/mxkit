@@ -14,7 +14,7 @@ import mbkit.dispatch.cexectools
 logger = logging.getLogger(__name__)
 
 
-class _Worker(multiprocessing.Process):
+class Worker(multiprocessing.Process):
     """Simple manual worker class to execute jobs in the queue"""
 
     def __init__(self, queue, check_success=None, directory=None, permit_nonzero=False):
@@ -32,7 +32,7 @@ class _Worker(multiprocessing.Process):
            Allow non-zero return codes [default: False]
 
         """
-        super(_Worker, self).__init__()
+        super(Worker, self).__init__()
         self.check_success = check_success
         self.directory = directory
         self.permit_nonzero = permit_nonzero
@@ -42,20 +42,15 @@ class _Worker(multiprocessing.Process):
         """Method representing the process's activity"""
         for job in iter(self.queue.get, None):
             if job is not None:
-                # logger.debug("Worker %s running job %s", multiprocessing.current_process().name, job)
                 stdout = mbkit.dispatch.cexectools.cexec([job], directory=self.directory, permit_nonzero=self.permit_nonzero)
                 with open(job.rsplit('.', 1)[0] + '.log', 'w') as f_out:
                     f_out.write(stdout)
-                # logger.debug("Worker %s running job %s finished", multiprocessing.current_process().name, job)
                 if callable(self.check_success) and self.check_success(job):
-                    # logger.debug("Job %s succeeded on worker %s", job, multiprocessing.current_process().name)
                     break
             if self.queue.empty():
                 break
         while not self.queue.empty():
-            _job = self.queue.get()
-            # if _job is not None:
-            #     logger.debug("Removing job %s from the queue", _job)
+            self.queue.get()
 
 
 class LocalJobServer(object):
@@ -95,7 +90,7 @@ class LocalJobServer(object):
         # Create workers equivalent to the number of jobs
         workers = []
         for _ in range(nproc):
-            wp = _Worker(queue, check_success=check_success, directory=directory, permit_nonzero=permit_nonzero)
+            wp = Worker(queue, check_success=check_success, directory=directory, permit_nonzero=permit_nonzero)
             wp.start()
             workers.append(wp)
         # Add each command to the queue

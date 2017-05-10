@@ -1,6 +1,5 @@
 """Molecular Biology ToolKit Utility Module"""
 
-import os
 import tempfile
 
 
@@ -17,5 +16,7 @@ def tmp_fname(directory=None, prefix='tmp', suffix=""):
        A suffix to the temporary filename
 
     """
-    return tempfile.mkstemp(dir=directory, prefix=prefix, suffix=suffix)[1]
+    tmpf = tempfile.NamedTemporaryFile(dir=directory, prefix=prefix, suffix=suffix, delete=False)
+    tmpf.close()
+    return tmpf.name
 
