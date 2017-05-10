@@ -5,10 +5,13 @@ __date__ = "08 May 2017"
 __version__ = "0.1"
 
 import logging
+import glob
 import os
 import re
+import shutil
 
-import cexectools
+import mbkit.apps
+import mbkit.dispatch.cexectools
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +80,7 @@ class _LoadSharingFacility(_Platform):
             cmd += ["-W", str(time)]
         cmd += ["<"] + map(str, command)
         # Submit the job
-        stdout = cexectools.cexec(cmd, directory=directory)
+        stdout = mbkit.dispatch.cexectools.cexec(cmd, directory=directory)
         # Obtain the job id
         jobid = int(stdout.split()[1][1:-1])
         logger.debug("Job %d successfully submitted to the LSF queue", jobid)
@@ -99,7 +102,7 @@ class _LoadSharingFacility(_Platform):
 
         """
         cmd = ["bjobs", "-j", str(jobid)]
-        stdout = cexectools.cexec(cmd, permit_nonzero=True)
+        stdout = mbkit.dispatch.cexectools.cexec(cmd, permit_nonzero=True)
         data = {}
         # line_split = re.compile(':\s+')
         # for line in stdout.split(os.linesep):
@@ -125,8 +128,28 @@ class _LoadSharingFacility(_Platform):
 
         """
         cmd = ["bkill", str(jobid)]
-        _ = cexectools.cexec(cmd)
+        _ = mbkit.dispatch.cexectools.cexec(cmd)
         logger.debug("Removed job %d from the queue", jobid)
+
+    @staticmethod
+    def rename_array_logs(array_jobs_f, directory):
+        """Rename a set of array logs to match the names of the scripts
+
+        Parameters
+        ----------
+        array_jobs_f : str
+           The path to the 'array.jobs' file
+        directory : str
+           The directory containing the 'arrayJob_X.log' files
+
+        Raises
+        ------
+        ValueError
+           Number of scripts and logs non-identical
+
+        """
+        logger.debug("Array job file provided for renaming logs: %s", array_jobs_f)
+        logger.critical("Not yet implemented")
 
 
 class SunGridEngine(_Platform):
@@ -185,7 +208,7 @@ class SunGridEngine(_Platform):
             cmd += ["-l", "h_rt={0}".format(time)]
         cmd += map(str, command)
         # Submit the job
-        stdout = cexectools.cexec(cmd, directory=directory)
+        stdout = mbkit.dispatch.cexectools.cexec(cmd, directory=directory)
         # Obtain the job id
         jobid = int(stdout.split()[2].split(".")[0]) if array else int(stdout.split()[2])
         logger.debug("Job %d successfully submitted to the SGE queue", jobid)
@@ -207,7 +230,7 @@ class SunGridEngine(_Platform):
 
         """
         cmd = ["qstat", "-j", str(jobid)]
-        stdout = cexectools.cexec(cmd, permit_nonzero=True)
+        stdout = mbkit.dispatch.cexectools.cexec(cmd, permit_nonzero=True)
         data = {}
         line_split = re.compile(':\s+')
         for line in stdout.split(os.linesep):
@@ -233,6 +256,37 @@ class SunGridEngine(_Platform):
 
         """
         cmd = ["qdel", str(jobid)]
-        _ = cexectools.cexec(cmd)
+        _ = mbkit.dispatch.cexectools.cexec(cmd)
         logger.debug("Removed job %d from the queue", jobid)
+
+    @staticmethod
+    def rename_array_logs(array_jobs_f, directory):
+        """Rename a set of array logs to match the names of the scripts
+
+        Parameters
+        ----------
+        array_jobs_f : str
+           The path to the 'array.jobs' file
+        directory : str
+           The directory containing the 'arrayJob_X.log' files
+
+        Raises
+        ------
+        ValueError
+           Number of scripts and logs non-identical
+
+        """
+        logger.debug("Array job file provided for renaming logs: %s", array_jobs_f)
+        scripts = [l.strip() for l in open(array_jobs_f, 'r').readlines() if l.strip()]
+        if all(s.endswith(mbkit.apps.SCRIPT_EXT) for s in scripts):
+            script_logs = [s.rsplit('.', 1)[0] + '.log' for s in scripts]
+        else:
+            script_logs = [s + '.log' for s in scripts]
+        array_logs = glob.glob(os.path.join(directory, "arrayJob_*.log"))
+        if len(array_logs) != len(script_logs):
+            raise ValueError("Number of scripts and logs non-identical")
+        for al, sl in zip(array_logs, script_logs):
+            # Use shutil, os.rename crashes on Unix-systems when copying 
+            # across file systems.
+            shutil.move(al, sl)
 

@@ -44,12 +44,12 @@ def submit_job(script, qtype, *args, **kwargs):
     elif not all(os.access(fpath, os.X_OK) for fpath in script):
         raise ValueError("One or more scripts are not executable")
     # Submit the job to the corresponding queue
+    array_job_on_order = True if len(script) > 1 else True
     if qtype == "local":
         mbkit.dispatch.local.LocalJobServer.sub(script, **kwargs)
-
-    elif qtype == "sge":
+    elfif qtype == "sge":
         # Array job - deal with it
-        if len(script) > 1:
+        if array_job_on_order:
             array = (1, len(script), len(script))
             # Write all jobs into an array.jobs file
             array_jobs = os.path.join(kwargs['directory'], 'array.jobs')
@@ -70,6 +70,9 @@ def submit_job(script, qtype, *args, **kwargs):
         pid = qobj.qsub(script, array=array, **kwargs)
         while qobj.qstat(pid):
             time.sleep(60)
+        # Finally, we need to rename arrayJob_X.log files
+        if array_job_on_order:
+            qobj.rename_array_logs(array_jobs, kwargs['directory'])
     else:
         raise ValueError("Unknown queue: {0}".format(queue))
     

@@ -9,7 +9,7 @@ import multiprocessing
 import os
 import time
 
-import cexectools
+import mbkit.dispatch.cexectools
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ class _Worker(multiprocessing.Process):
         for job in iter(self.queue.get, None):
             if job is not None:
                 logger.debug("Worker %s running job %s", multiprocessing.current_process().name, job)
-                stdout = cexectools.cexec([job], directory=self.directory, permit_nonzero=self.permit_nonzero)
+                stdout = mbkit.dispatch.cexectools.cexec([job], directory=self.directory, permit_nonzero=self.permit_nonzero)
                 with open(job.rsplit('.', 1)[0] + '.log', 'w') as f_out:
                     f_out.write(stdout)
                 logger.debug("Worker %s running job %s finished", multiprocessing.current_process().name, job)
