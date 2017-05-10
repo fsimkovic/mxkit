@@ -47,7 +47,7 @@ def submit_job(script, qtype, *args, **kwargs):
     array_job_on_order = True if len(script) > 1 else True
     if qtype == "local":
         mbkit.dispatch.local.LocalJobServer.sub(script, **kwargs)
-    elfif qtype == "sge":
+    elif qtype == "sge":
         # Array job - deal with it
         if array_job_on_order:
             array = (1, len(script), len(script))

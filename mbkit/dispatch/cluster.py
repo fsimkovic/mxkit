@@ -192,7 +192,6 @@ class SunGridEngine(_Platform):
         if deps:
             cmd += ["-hold_jid",  "{0}".format(",".join(map(str, deps)))]
         if log:
-            # '-j y' required to pipe stderr to stdout
             cmd += ["-j", "y", "-o", log]
         if name:
             cmd += ["-N", name]
@@ -286,7 +285,6 @@ class SunGridEngine(_Platform):
         if len(array_logs) != len(script_logs):
             raise ValueError("Number of scripts and logs non-identical")
         for al, sl in zip(array_logs, script_logs):
-            # Use shutil, os.rename crashes on Unix-systems when copying 
-            # across file systems.
+            # os.rename crashes on Unix-systems when copying across file systems.
             shutil.move(al, sl)
 
