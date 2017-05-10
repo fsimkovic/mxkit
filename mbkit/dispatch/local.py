@@ -42,20 +42,20 @@ class _Worker(multiprocessing.Process):
         """Method representing the process's activity"""
         for job in iter(self.queue.get, None):
             if job is not None:
-                logger.debug("Worker %s running job %s", multiprocessing.current_process().name, job)
+                # logger.debug("Worker %s running job %s", multiprocessing.current_process().name, job)
                 stdout = mbkit.dispatch.cexectools.cexec([job], directory=self.directory, permit_nonzero=self.permit_nonzero)
                 with open(job.rsplit('.', 1)[0] + '.log', 'w') as f_out:
                     f_out.write(stdout)
-                logger.debug("Worker %s running job %s finished", multiprocessing.current_process().name, job)
+                # logger.debug("Worker %s running job %s finished", multiprocessing.current_process().name, job)
                 if callable(self.check_success) and self.check_success(job):
-                    logger.debug("Job %s succeeded on worker %s", job, multiprocessing.current_process().name)
+                    # logger.debug("Job %s succeeded on worker %s", job, multiprocessing.current_process().name)
                     break
             if self.queue.empty():
                 break
         while not self.queue.empty():
             _job = self.queue.get()
-            if _job is not None:
-                logger.debug("Removing job %s from the queue", _job)
+            # if _job is not None:
+            #     logger.debug("Removing job %s from the queue", _job)
 
 
 class LocalJobServer(object):
@@ -93,17 +93,18 @@ class LocalJobServer(object):
         # Create a new queue
         queue = multiprocessing.Queue()
         # Create workers equivalent to the number of jobs
-        processes = []
+        workers = []
         for _ in range(nproc):
-            p = _Worker(queue, check_success=check_success, directory=directory, permit_nonzero=permit_nonzero)
-            p.start()
-            processes.append(p)
+            wp = _Worker(queue, check_success=check_success, directory=directory, permit_nonzero=permit_nonzero)
+            wp.start()
+            workers.append(wp)
         # Add each command to the queue
         for cmd in command:
             queue.put(cmd, timeout=time)
         # Stop workers from exiting without completion
         for _ in range(nproc):
             queue.put(None) 
-        for p in processes:
-            p.join()
+        logger.info("Starting jobs on the local machine")
+        for wp in workers:
+            wp.join()
 
