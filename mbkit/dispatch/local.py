@@ -4,23 +4,28 @@ __author__ = "Felix Simkovic"
 __date__ = "09 May 2017"
 __version__ = "0.1"
 
+import logging
 import multiprocessing
 import os
 import time
 
 import mbkit.dispatch.cexectools
 
+logger = logging.getLogger()
+
 
 class Worker(multiprocessing.Process):
     """Simple manual worker class to execute jobs in the queue"""
 
-    def __init__(self, queue, check_success=None, directory=None, permit_nonzero=False):
+    def __init__(self, queue, success_state, check_success=None, directory=None, permit_nonzero=False):
         """Instantiate a new worker
 
         Parameters
         ----------
         queue : obj
            An instance of a :obj:`Queue <multiprocessing.Queue>`
+        success_state : obj
+           An instance of a :obl:`Value <multiprocessing.Value>`
         check_success : func, optional
            A callable function to check the success of a job
         directory : str, optional
@@ -33,16 +38,21 @@ class Worker(multiprocessing.Process):
         self.check_success = check_success
         self.directory = directory
         self.permit_nonzero = permit_nonzero
+        self.success_state = success_state
         self.queue = queue
 
     def run(self):
         """Method representing the process's activity"""
         for job in iter(self.queue.get, None):
+            if self.success_state.value:
+                continue
             stdout = mbkit.dispatch.cexectools.cexec([job], directory=self.directory, permit_nonzero=self.permit_nonzero)
             with open(job.rsplit('.', 1)[0] + '.log', 'w') as f_out:
                 f_out.write(stdout)
-            # if callable(self.check_success) and self.check_success(job):
-        
+            if callable(self.check_success) and self.check_success(job):
+                self.success_state.value = True
+            time.sleep(1)
+    
 
 class LocalJobServer(object):
     """A local server to execute jobs via the multiprocessing module"""
@@ -78,18 +88,20 @@ class LocalJobServer(object):
         
         # Create a new queue
         queue = multiprocessing.Queue()
-
+        success_state = multiprocessing.Value('b', False)
         # Create workers equivalent to the number of jobs
         workers = []
         for _ in range(nproc):
-            wp = Worker(queue, check_success=check_success, directory=directory, permit_nonzero=permit_nonzero)
+            wp = Worker(queue, success_state, check_success=check_success, directory=directory, permit_nonzero=permit_nonzero)
             wp.start()
             workers.append(wp)
         # Add each command to the queue
         for cmd in command:
-            queue.put(cmd, timeout=time)
+            queue.put(cmd)
         # Stop workers from exiting without completion
         for _ in range(nproc):
             queue.put(None) 
+        # Start the workers
         for wp in workers:
-            wp.join()
+            wp.join(time)
+

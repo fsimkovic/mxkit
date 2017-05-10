@@ -40,11 +40,11 @@ class TestLocalJobServer(unittest.TestCase):
         self.assertTrue(os.path.isfile(logs[-1]))
         for f in jobs + logs: os.unlink(f)
      
-    def _test_sub_3(self):
+    def test_sub_3(self):
         def _checker(j):
             with open(j.rsplit('.', 1)[0] + '.log', 'r') as f_in:
                 lines = f_in.readlines()
-            return any(l.find("the special one") for l in lines)
+            return any("the special one" in l for l in lines)
 
         jobs = [
             mbkit.apps.make_python_script([
