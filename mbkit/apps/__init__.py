@@ -156,9 +156,14 @@ def make_python_script(cmd, directory=None, prefix='mbkit_', suffix='.py'):
     directory : str, optional
        The directory to create the script in
     prefix : str, optional
-       The script prefix
+       The script prefix [default: ``mbkit_``]
     suffix : str, optional
-       The script suffix
+       The script suffix [default: ``.py``]
+
+    Returns
+    -------
+    str
+       The path to the script
 
     """
     if directory is None:
@@ -188,9 +193,9 @@ def make_script(cmd, directory=None, prefix='mbkit_', suffix=SCRIPT_EXT):
     directory : str, optional
        The directory to create the script in
     prefix : str, optional
-       The script prefix
+       The script prefix [default: ``mbkit_``]
     suffix : str, optional
-       The script suffix
+       The script suffix [default: POSIX - ``.sh``, Windows - ``.bat``]
 
     Returns
     -------
