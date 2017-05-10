@@ -17,5 +17,5 @@ def tmp_fname(directory=None, prefix='tmp', suffix=""):
        A suffix to the temporary filename
 
     """
-    return tempfile.mkstemp(dir=directory, prefix=prefix, suffix=suffix)[0]
+    return tempfile.mkstemp(dir=directory, prefix=prefix, suffix=suffix)[1]
 

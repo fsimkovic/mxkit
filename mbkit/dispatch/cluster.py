@@ -156,7 +156,7 @@ class SunGridEngine(_Platform):
     """Object to handle the Sun Grid Engine (SGE) management platform"""
     
     @staticmethod
-    def qsub(command, array=None, deps=None, directory=None, log=None, name=None, pe_opts=None, priority=None, queue=None, shell=None, time=None, *args, **kwargs):
+    def qsub(command, array=None, deps=None, directory=None, hold=False, log=None, name=None, pe_opts=None, priority=None, queue=None, shell=None, time=None, *args, **kwargs):
         """Submit a job to the SGE queue
 
         Parameters
@@ -169,6 +169,10 @@ class SunGridEngine(_Platform):
            A list of dependency job ids
         directory : str, optional
            A path to a directory to run the job in
+        hold : bool, optional
+           Submit but __hold__ the job
+           Note: 
+              There is currently no ``qrls`` function in ``mbkit``
         log : str, optional
            The path to a logfile for stdout
         name : str, optional
@@ -191,6 +195,8 @@ class SunGridEngine(_Platform):
             cmd += ["-t", "{0}-{1}".format(*array[:2]), "-tc", str(array[2])]
         if deps:
             cmd += ["-hold_jid",  "{0}".format(",".join(map(str, deps)))]
+        if hold:
+            cmd += ["-h"]
         if log:
             cmd += ["-j", "y", "-o", log]
         if name:
