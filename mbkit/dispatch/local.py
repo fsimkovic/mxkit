@@ -4,14 +4,11 @@ __author__ = "Felix Simkovic"
 __date__ = "09 May 2017"
 __version__ = "0.1"
 
-import logging
 import multiprocessing
 import os
 import time
 
 import mbkit.dispatch.cexectools
-
-logger = logging.getLogger(__name__)
 
 
 class Worker(multiprocessing.Process):
@@ -41,17 +38,11 @@ class Worker(multiprocessing.Process):
     def run(self):
         """Method representing the process's activity"""
         for job in iter(self.queue.get, None):
-            if job is not None:
-                stdout = mbkit.dispatch.cexectools.cexec([job], directory=self.directory, permit_nonzero=self.permit_nonzero)
-                with open(job.rsplit('.', 1)[0] + '.log', 'w') as f_out:
-                    f_out.write(stdout)
-                if callable(self.check_success) and self.check_success(job):
-                    break
-            if self.queue.empty():
-                break
-        while not self.queue.empty():
-            self.queue.get()
-
+            stdout = mbkit.dispatch.cexectools.cexec([job], directory=self.directory, permit_nonzero=self.permit_nonzero)
+            with open(job.rsplit('.', 1)[0] + '.log', 'w') as f_out:
+                f_out.write(stdout)
+            # if callable(self.check_success) and self.check_success(job):
+        
 
 class LocalJobServer(object):
     """A local server to execute jobs via the multiprocessing module"""
@@ -87,6 +78,7 @@ class LocalJobServer(object):
         
         # Create a new queue
         queue = multiprocessing.Queue()
+
         # Create workers equivalent to the number of jobs
         workers = []
         for _ in range(nproc):
@@ -99,7 +91,5 @@ class LocalJobServer(object):
         # Stop workers from exiting without completion
         for _ in range(nproc):
             queue.put(None) 
-        logger.info("Starting jobs on the local machine")
         for wp in workers:
             wp.join()
-

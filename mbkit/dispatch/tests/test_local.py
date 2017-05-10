@@ -40,7 +40,7 @@ class TestLocalJobServer(unittest.TestCase):
         self.assertTrue(os.path.isfile(logs[-1]))
         for f in jobs + logs: os.unlink(f)
      
-    def test_sub_3(self):
+    def _test_sub_3(self):
         def _checker(j):
             with open(j.rsplit('.', 1)[0] + '.log', 'r') as f_in:
                 lines = f_in.readlines()
