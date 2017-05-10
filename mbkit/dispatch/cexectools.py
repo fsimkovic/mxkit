@@ -13,7 +13,7 @@ import sys
 logger = logging.getLogger(__name__)
 
 
-def cexec(cmd, directory=None, stdin="", permit_nonzero=False):
+def cexec(cmd, directory=None, stdin=None, permit_nonzero=False):
     """Execute a command
 
     Parameters
@@ -42,9 +42,9 @@ def cexec(cmd, directory=None, stdin="", permit_nonzero=False):
         logger.debug("Executing '%s'", " ".join(cmd))
         kwargs = {"bufsize":0, "shell":"False"} if os.name == "nt" else {}
         p = subprocess.Popen(cmd, cwd=directory, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, **kwargs)
-        if stdin is not None:
-            p.stdin.write(stdin)
-        stdout, _ = p.communicate()
+        # We require the str.encode() and str.decode() functions for Python 2.x and 3.x compatibility
+        stdout, _ = p.communicate(input=stdin.encode()) if stdin else p.communicate()
+        stdout = stdout.decode()
         if p.returncode == 0 or permit_nonzero:
             return stdout.strip()
         else:

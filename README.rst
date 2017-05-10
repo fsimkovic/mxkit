@@ -8,6 +8,10 @@ Molecular Biology ToolKit
    :target: http://mbkit.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
+.. image:: https://travis-ci.org/rigdenlab/mbkit.svg?branch=master
+   :target: https://travis-ci.org/rigdenlab/mbkit
+   :alt: Travis Build
+
 Installation & Usage
 ++++++++++++++++++++
 Please refer to `MbKit's documentation <http://mbkit.rtfd.org/en/latest/install.html>`_.

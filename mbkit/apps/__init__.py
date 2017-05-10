@@ -13,6 +13,9 @@ __author__ = "Felix Simkovic"
 __date__ = "20 Feb 2017"
 __version__ = "0.1"
 
+import os
+import sys
+
 from Bio.Application import AbstractCommandline
 from Bio.Application import _Argument
 from Bio.Application import _ArgumentList
@@ -20,9 +23,7 @@ from Bio.Application import _Option
 from Bio.Application import _Switch
 from Bio.Application import _escape_filename
 
-import os
-import sys
-import tempfile
+import mbkit.util
 
 # OS-dependent script headers and extensions
 if sys.platform.startswith('win'):
@@ -144,7 +145,39 @@ class Switch(_Switch):
             return []
 
 
-def make_script(cmd, directory=None, prefix=None):
+def make_python_script(cmd, directory=None, prefix='mbkit_', suffix='.py'):
+    """Create an executable Python script
+
+    Parameters
+    ----------
+    cmd : list
+       The command to be written to the script. This can be a 1-dimensional 
+       or 2-dimensional list, depending on the Python commands to run.
+    directory : str, optional
+       The directory to create the script in
+    prefix : str, optional
+       The script prefix
+    suffix : str, optional
+       The script suffix
+
+    """
+    if directory is None:
+        directory = os.getcwd()
+    else:
+        directory = os.path.abspath(directory)
+    script = mbkit.util.tmp_fname(directory=directory, prefix=prefix, suffix=suffix)
+    with open(script, 'w') as f_out:
+        f_out.write("#!/usr/bin/env python" + os.linesep)
+        if isinstance(cmd, list) and isinstance(cmd[0], list):
+            for c in cmd:
+                f_out.write(' '.join(map(str, c)) + os.linesep)
+        elif isinstance(cmd, list):
+            f_out.write(' '.join(map(str, cmd)) + os.linesep)
+    os.chmod(script, 0o777)
+    return script
+
+
+def make_script(cmd, directory=None, prefix='mbkit_', suffix=SCRIPT_EXT):
     """Create an executable script
 
     Parameters
@@ -154,8 +187,10 @@ def make_script(cmd, directory=None, prefix=None):
        or 2-dimensional list, depending on the commands to run.
     directory : str, optional
        The directory to create the script in
-    name : str, optional
+    prefix : str, optional
        The script prefix
+    suffix : str, optional
+       The script suffix
 
     Returns
     -------
@@ -167,9 +202,7 @@ def make_script(cmd, directory=None, prefix=None):
         directory = os.getcwd()
     else:
         directory = os.path.abspath(directory)
-    if prefix is None:
-        prefix = "mbkit_"
-    script = tempfile.NamedTemporaryFile(dir=directory, delete=False, prefix=prefix, suffix=SCRIPT_EXT).name
+    script = mbkit.util.tmp_fname(directory=directory, prefix=prefix, suffix=suffix)
     with open(script, 'w') as f_out:
         f_out.write(SCRIPT_HEADER + os.linesep)
         if isinstance(cmd, list) and isinstance(cmd[0], list):
