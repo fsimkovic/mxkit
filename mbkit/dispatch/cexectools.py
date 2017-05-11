@@ -45,7 +45,10 @@ def cexec(cmd, directory=None, stdin=None, permit_nonzero=False):
         # We require the str.encode() and str.decode() functions for Python 2.x and 3.x compatibility
         stdout, _ = p.communicate(input=stdin.encode()) if stdin else p.communicate()
         stdout = stdout.decode()
-        if p.returncode == 0 or permit_nonzero:
+        if p.returncode == 0:
+            return stdout.strip()
+        elif permit_nonzero:
+            logger.debug("Ignoring non-zero returncode %d for '%s'", p.returncode, " ".join(cmd))
             return stdout.strip()
         else:
             msg = "Execution of '{0}' exited with non-zero return code ({1}): {2}" .format(' '.join(cmd), p.returncode, stdout)
