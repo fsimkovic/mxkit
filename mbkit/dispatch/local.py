@@ -71,7 +71,7 @@ class LocalJobServer(object):
     ... ]
     >>> LocalJobServer.sub(scripts, nproc=2)
 
-    This will create three Python script files and execute them by calling :func:`LocalJobServer.sub()`. 
+    This will create three Python script files and execute them by calling :func:`sub <LocalJobServer.sub>`. 
     
     Sometimes you might want to submit many jobs where you know that some are going to fail. In this 
     case, you can also use the :obj:`LocalJobServer` and provide the ``permit_nonzero`` keyword argument,
@@ -92,10 +92,10 @@ class LocalJobServer(object):
     ... ]
     >>> LocalJobServer.sub(scripts, nproc=2, check_success=succ_func)
 
-    In this example, we create and provde the :func:`succ_func()` to the :func:`LocalJobServer.sub()` call.
-    As jobs are executed, each worker checks if that particular job was successful via :func:`succ_func()`,
-    and if so the entire execution process will terminate. *Note, only log files for the executed jobs will 
-    be created.*
+    In this example, we create and provde the :func:`succ_func` to the :func:`sub <LocalJobServer.sub>` call.
+    As jobs are executed, each worker checks if that particular job was successful via :func:`succ_func`,
+    and if so the entire execution process will terminate. **Note, only log files for the executed jobs will 
+    be created.**
 
     """
 
