@@ -49,9 +49,10 @@ class Worker(multiprocessing.Process):
             stdout = mbkit.dispatch.cexectools.cexec([job], directory=self.directory, permit_nonzero=self.permit_nonzero)
             with open(job.rsplit('.', 1)[0] + '.log', 'w') as f_out:
                 f_out.write(stdout)
-            if callable(self.check_success) and self.check_success(job):
-                self.success_state.value = True
-            time.sleep(1)
+            if callable(self.check_success):
+                if self.check_success(job):
+                    self.success_state.value = True
+                time.sleep(1)
     
 
 class LocalJobServer(object):
