@@ -1,3 +1,4 @@
+"""Dispatcher module for easy job submission to local machines or job management systems"""
 
 __author__ = "Felix Simkovic"
 __date__ = "09 May 2017"
@@ -48,6 +49,7 @@ def submit_job(script, qtype, *args, **kwargs):
     if qtype == "local":
         mbkit.dispatch.local.LocalJobServer.sub(script, **kwargs)
     elif qtype == "sge":
+        qobj = mbkit.dispatch.cluster.SunGridEngine
         # Array job - deal with it
         if array_job_on_order:
             array = (1, len(script), len(script))
@@ -65,9 +67,9 @@ def submit_job(script, qtype, *args, **kwargs):
                 ]))
             kwargs['log'] = "arrayJob_$TASK_ID.log"
             script = [array_script]
-        # Submit the jobs
-        qobj = mbkit.dispatch.cluster.SunGridEngine
-        pid = qobj.qsub(script, array=array, **kwargs)
+            pid = qobj.qsub(script, array=array, **kwargs)
+        else:
+            pid = qobj.qsub(script, **kwargs)
         while qobj.qstat(pid):
             time.sleep(60)
         # Finally, we need to rename arrayJob_X.log files
