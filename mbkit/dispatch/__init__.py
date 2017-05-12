@@ -44,7 +44,7 @@ def submit_job(script, qtype, *args, **kwargs):
     elif not all(os.access(fpath, os.X_OK) for fpath in script):
         raise ValueError("One or more scripts are not executable")
     # Submit the job to the corresponding queue
-    array_job_on_order = True if len(script) > 1 else True
+    array_job_on_order = True if len(script) > 1 else False 
     if qtype == "local":
         mbkit.dispatch.local.LocalJobServer.sub(script, **kwargs)
     elif qtype == "sge":
