@@ -41,8 +41,8 @@ class TestLocalJobServer(unittest.TestCase):
         for f in jobs + logs: os.unlink(f)
      
     def test_sub_3(self):
-        def _checker(j):
-            with open(j.rsplit('.', 1)[0] + '.log', 'r') as f_in:
+        def _checker(log):
+            with open(log, 'r') as f_in:
                 lines = f_in.readlines()
             return any("the special one" in l for l in lines)
 
@@ -74,5 +74,7 @@ class TestLocalJobServer(unittest.TestCase):
             if os.path.isfile(f): 
                 os.unlink(f)
      
-        
+
+if __name__ == "__main__":
+        unittest.main(verbosity=2)
 

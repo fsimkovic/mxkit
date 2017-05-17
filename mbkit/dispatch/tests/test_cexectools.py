@@ -41,3 +41,6 @@ class Test(unittest.TestCase):
         stdout = mbkit.dispatch.cexectools.cexec(cmd, directory=directory)
         self.assertEqual(directory, stdout)
 
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
