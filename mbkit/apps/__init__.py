@@ -52,19 +52,19 @@ class AbstractCommandline(AbstractCommandline):
             if parameter.is_set:
                 commandline.extend(parameter._as_list())
         return commandline
-
-    def _as_script(self, f):
+    
+    def _as_script(self, directory=None):
         """Write the command line to a script
 
         Parameters
         ----------
-        f : str
-           The path to the file
+        directory : str
+           The path to a directory for scripts
 
         """
-        with open(f, 'w') as f_out:
-            f_out.write(SCRIPT_HEADER + os.linesep)
-            f_out.write(str(self) + os.linesep)
+        if directory is None:
+            directory = os.getcwd()
+        return make_script(self._as_list(), directory=directory)
 
     @staticmethod
     def find_exec(program, dirs=None):

@@ -11,6 +11,7 @@ Submodules
 
 .. toctree::
 
+   mbkit.apps.Dssp
    mbkit.apps.Maxcluster
    mbkit.apps.Molrep
    mbkit.apps.Refmac

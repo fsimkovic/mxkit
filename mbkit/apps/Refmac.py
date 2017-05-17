@@ -13,8 +13,6 @@ from mbkit.apps import Switch
 class RefmacCommandline(AbstractCommandline):
     """Python wrapper for the Refmac [#]_ binary
 
-    Description
-    -----------
     Refmac [#]_ is a program designed for the REFinement of MACromolecular structures. Refmac is part of the CCP4
     software suite. CCP4 is needed for running this wrapper. It can be downloaded from www.ccp4.ac.uk.
 
@@ -23,12 +21,15 @@ class RefmacCommandline(AbstractCommandline):
 
     Examples
     --------
+
     1. Run Refmac (note: The command line is constant and the stdin options control how Refmac is run):
+
     >>> from mbkit.apps import Refmac
     >>> refmac_exe = Refmac.RefmacCommandline(
     ...     "/usr/bin/refmac5", hklin="data.mtz", hklout="name.mtz", xyzin="data.pdb", xyzout="name.pdb")
     >>> print(refmac_exe)
     /usr/bin/refmac5 HKLIN data.mtz HKLOUT name.mtz XYZIN data.pdb XYZOUT name.pdb
+
     """
 
     def __init__(self, cmd='refmac5', **kwargs):

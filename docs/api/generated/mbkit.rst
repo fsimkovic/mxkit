@@ -19,5 +19,6 @@ Submodules
 
 .. toctree::
 
+   mbkit.util
    mbkit.version
 

@@ -13,8 +13,6 @@ from mbkit.apps import Switch
 class TMalignCommandline(AbstractCommandline):
     """Python wrapper for the TMalign [#]_ binary
 
-    Description
-    -----------
     TM-align [#]_ is an algorithm for sequence-order independent protein structure
     comparisons. For two protein structures of unknown equivalence, TM-align
     first generates optimized residue-to-residue alignment based on structural
@@ -31,6 +29,7 @@ class TMalignCommandline(AbstractCommandline):
 
     Examples
     --------
+
     >>> from mbkit.apps import TMalign
     >>> tm_exe = TMalign.TMalignCommandline(chain1="model1.pdb", chain2="model2.pdb")
     >>> print(tm_exe)

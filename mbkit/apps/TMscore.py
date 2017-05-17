@@ -13,8 +13,6 @@ from mbkit.apps import Switch
 class TMscoreCommandline(AbstractCommandline):
     """Python wrapper for the TMscore [#]_ binary
 
-    Description
-    -----------
     TM-score [#]_ is a metric for measuring the structural similarity of two protein models.
     It is designed to solve two major problems in the traditional metrics such as
     root-mean-square deviation (RMSD): (1) TM-score measures the global fold similarity
@@ -31,32 +29,36 @@ class TMscoreCommandline(AbstractCommandline):
     --------
 
     1. Run TM-score to compare 'model' and 'native':
+
     >>> from mbkit.apps import TMscore
     >>> tm_exe = TMscore.TMscoreCommandline(
     ...     "/usr/bin/TMscore", model="model.pdb", native="native.pdb")
     >>> print(tm_exe)
     /usr/bin/TMscore model.pdb native.pdb
 
-     2. Run TM-score to compare two complex structures with multiple chains
-     >>> from mbkit.apps import TMscore
-     >>> tm_exe = TMscore.TMscoreCommandline(
-     ...     "/usr/bin/TMscore", complex=True, model="model.pdb", native="native.pdb")
-     >>> print(tm_exe)
+    2. Run TM-score to compare two complex structures with multiple chains
+
+    >>> from mbkit.apps import TMscore
+    >>> tm_exe = TMscore.TMscoreCommandline(
+    ...     "/usr/bin/TMscore", complex=True, model="model.pdb", native="native.pdb")
+    >>> print(tm_exe)
     /usr/bin/TMscore -c model.pdb native.pdb
 
-     3. TM-score normalized with an assigned scale d0 e.g. 5 A
-     >>> from mbkit.apps import TMscore
-     >>> tm_exe = TMscore.TMscoreCommandline(
-     ...     "/usr/bin/TMscore", norm_scale=5, model="model.pdb", native="native.pdb")
-     >>> print(tm_exe)
-     /usr/bin/TMscore model native -d 5
+    3. TM-score normalized with an assigned scale d0 e.g. 5 A
 
-     4. TM-score normalized by a specific length, e.g. 120 AA
-     >>> from mbkit.apps import TMscore
-     >>> tm_exe = TMscore.TMscoreCommandline(
-     ...     "/usr/bin/TMscore", norm_length=5, model="model.pdb", native="native.pdb")
-     >>> print(tm_exe)
-     /usr/bin/TMscore model native -l 120
+    >>> from mbkit.apps import TMscore
+    >>> tm_exe = TMscore.TMscoreCommandline(
+    ...     "/usr/bin/TMscore", norm_scale=5, model="model.pdb", native="native.pdb")
+    >>> print(tm_exe)
+    /usr/bin/TMscore model native -d 5
+
+    4. TM-score normalized by a specific length, e.g. 120 AA
+
+    >>> from mbkit.apps import TMscore
+    >>> tm_exe = TMscore.TMscoreCommandline(
+    ...     "/usr/bin/TMscore", norm_length=5, model="model.pdb", native="native.pdb")
+    >>> print(tm_exe)
+    /usr/bin/TMscore model native -l 120
 
     """
     def __init__(self, cmd='TMscore', **kwargs):
