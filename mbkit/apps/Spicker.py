@@ -1,4 +1,25 @@
-"""Python wrapper module for the Spicker binary"""
+"""Python wrapper module for the Spicker [#]_ binary
+
+Description
+-----------
+SPICKER [#]_ is a clustering algorithm to identify the near-native
+models from a pool of protein structure decoys.
+
+Examples
+--------
+>>> from mbkit.apps import Spicker
+>>> spicker_exe = Spicker.SpickerCommandline(
+...     rmsinp='rmsinp', seqdat='seqdat', train='tra.in', reptra=['rep1.tra1']
+... )
+>>> print(spicker_exe)
+spicker rmsinp seq.dat tra.in rep1.tra1
+
+Citations
+---------
+.. [#] Zhang Y, Skolnick J (2004). SPICKER: A Clustering Approach to
+   Identify Near-Native Protein Folds. J Comp Chem 25, 865-871.
+
+"""
 
 __author__ = "Felix Simkovic"
 __date__ = "28 Aug 2016"
@@ -10,23 +31,7 @@ from mbkit.apps import ArgumentList
 
 
 class SpickerCommandline(AbstractCommandline):
-    """Python wrapper module for the Spicker [#]_ binary
 
-    SPICKER [#]_ is a clustering algorithm to identify the near-native
-    models from a pool of protein structure decoys.
-
-    .. [#] Zhang Y, Skolnick J (2004). SPICKER: A Clustering Approach to
-           Identify Near-Native Protein Folds. J Comp Chem 25, 865-871.
-
-    Examples
-    --------
-
-    >>> from mbkit.apps import Spicker
-    >>> spicker_exe = Spicker.SpickerCommandline(rmsinp='rmsinp', seqdat='seqdat', train='tra.in', reptra=['rep1.tra1'])
-    >>> print(spicker_exe)
-    spicker rmsinp seq.dat tra.in rep1.tra1
-
-    """
     def __init__(self, cmd='spicker', **kwargs):
         self.parameters = [
             Argument(['rmsinp'],

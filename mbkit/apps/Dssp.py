@@ -2,7 +2,6 @@
 
 Examples
 --------
-
 >>> from mbkit.apps import Dssp
 >>> dssp_exe = Dssp.DsspCommandline(
 ...     "/usr/bin/dssp", input="model.pdb", output="model.dssp"
@@ -12,7 +11,6 @@ Examples
 
 Citations
 ---------
-
 .. [#] Kabsch W, Sander C (1983). Dictionary of protein secondary structure: pattern
    recognition of hydrogen-bonded and geometrical features. Biopolymers 22, 2577-2637.
 

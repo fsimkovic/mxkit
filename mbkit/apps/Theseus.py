@@ -1,4 +1,25 @@
-"""Python wrapper module for the Theseus binary"""
+"""Python wrapper module for the Theseus [#]_ [#]_ binary
+
+Description
+-----------
+THESEUS: Maximum likelihood multiple superpositioning
+
+Examples
+--------
+>>> from mbkit.apps import Theseus
+>>> theseus_exe = Theseus.TheseusCommandline(pdb_files="model1.pdb model2.pdb model3.pdb")
+>>> print(theseus_exe)
+theseus model1.pdb model2.pdb model3.pdb
+
+Citations
+---------
+.. [#] Theobald DL, Steindel PA (2012). Optimal simultaneous superpositioning of
+   multiple structures with missing data. Bioinformatics 28(15), 1972-1979.
+
+.. [#] Theobald DL, Wuttke DS (2008). Accurate structural correlations from maximum
+   likelihood superpositions. PLOS Computational Biology 4(2), e43.
+
+"""
 
 __author__ = "Felix Simkovic"
 __date__ = "28 Aug 2016"
@@ -11,25 +32,7 @@ from mbkit.apps import Switch
 
 
 class TheseusCommandline(AbstractCommandline):
-    """Python wrapper module for the Theseus [#]_ [#]_ binary
 
-    THESEUS: Maximum likelihood multiple superpositioning
-
-    .. [#] Theobald DL, Steindel PA (2012). Optimal simultaneous superpositioning of
-           multiple structures with missing data. Bioinformatics 28(15), 1972-1979.
-
-    .. [#] Theobald DL, Wuttke DS (2008). Accurate structural correlations from maximum
-           likelihood superpositions. PLOS Computational Biology 4(2), e43.
-
-    Examples
-    --------
-
-    >>> from mbkit.apps import Theseus
-    >>> theseus_exe = Theseus.TheseusCommandline(pdb_files="model1.pdb model2.pdb model3.pdb")
-    >>> print(theseus_exe)
-    theseus model1.pdb model2.pdb model3.pdb
-
-    """
     def __init__(self, cmd='theseus', **kwargs):
 
         if 'pdb_files' in kwargs and (isinstance(kwargs['pdb_files'], list) or isinstance(kwargs['pdb_files'], tuple)):

@@ -1,4 +1,39 @@
-"""Python wrapper module for the Maxcluster binary"""
+"""Python wrapper module for the Maxcluster [#]_ binary
+
+Description
+-----------
+MaxCluster [#]_ is a tool for Protein Structure Comparison and Clustering.
+It calculates MaxSub for PDB models / list of models and provides
+clustering routines for lists of models.
+
+Examples
+--------
+1. The first option to use maxcluster is to compare two structures, i.e. an experiment and predicted structure:
+
+>>> from mbkit.apps import Maxcluster
+>>> maxcluster_exe = Maxcluster.MaxclusterCommandline(pdb_experiment="experiment.pdb", pdb_prediction="model.pdb")
+>>> print(maxcluster_exe)
+maxcluster -e experiment.pdb -p model.pdb
+
+2. A second option is to invoke maxcluster using a list of models in an all vs all comparisons. Just provide the list file in case you wish to run such a comparison:
+
+>>> from mbkit.apps import Maxcluster
+>>> maxcluster_exe = Maxcluster.MaxclusterCommandline(pdb_list="models.list")
+>>> print(maxcluster_exe)
+maxcluster -l models.list
+
+3. Finally, if you wish to compare a list of models against a single experiment structure, you can use the following syntax to do just that:
+
+>>> from mbkit.apps import Maxcluster
+>>> maxcluster_exe = Maxcluster.MaxclusterCommandline(pdb_list="models.list", pdb_experiment='experiment.pdb')
+>>> print(maxcluster_exe)
+maxcluster -l models.list -e experiment.pdb
+
+Citations
+---------
+.. [#] Alex Herbert at the Structural Bioinformatics Group, Imperial College, London.
+
+"""
 
 __author__ = "Felix Simkovic"
 __date__ = "30 Aug 2016"
@@ -10,40 +45,8 @@ from mbkit.apps import Switch
 
 
 class MaxclusterCommandline(AbstractCommandline):
-    """Python wrapper module for the Maxcluster [#]_ binary
 
-    MaxCluster [#]_ is a tool for Protein Structure Comparison and Clustering.
-    It calculates MaxSub for PDB models / list of models and provides
-    clustering routines for lists of models.
-
-    .. [#] Alex Herbert at the Structural Bioinformatics Group, Imperial College, London.
-
-    Examples
-    --------
-
-    1. The first option to use maxcluster is to compare two structures, i.e. an experiment and predicted structure:
-
-    >>> from mbkit.apps import Maxcluster
-    >>> maxcluster_exe = Maxcluster.MaxclusterCommandline(pdb_experiment="experiment.pdb", pdb_prediction="model.pdb")
-    >>> print(maxcluster_exe)
-    maxcluster -e experiment.pdb -p model.pdb
-
-    2. A second option is to invoke maxcluster using a list of models in an all vs all comparisons. Just provide the list file in case you wish to run such a comparison:
-
-    >>> from mbkit.apps import Maxcluster
-    >>> maxcluster_exe = Maxcluster.MaxclusterCommandline(pdb_list="models.list")
-    >>> print(maxcluster_exe)
-    maxcluster -l models.list
-
-    3. Finally, if you wish to compare a list of models against a single experiment structure, you can use the following syntax to do just that:
-
-    >>> from mbkit.apps import Maxcluster
-    >>> maxcluster_exe = Maxcluster.MaxclusterCommandline(pdb_list="models.list", pdb_experiment='experiment.pdb')
-    >>> print(maxcluster_exe)
-    maxcluster -l models.list -e experiment.pdb
-
-    """
-    def __init__(self, cmd='maxcluster', **kwargs):
+   def __init__(self, cmd='maxcluster', **kwargs):
         if not self.options_ok(**kwargs):
             msg = "Unknown combination: Please use one of the following:" \
                   "     -e [file]   PDB experiment" \
