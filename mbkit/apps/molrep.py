@@ -13,88 +13,88 @@ Examples
 --------
 1. Run Molrep to do basic molecular replacement (RF + TF):
 
->>> from mbkit.apps import Molrep
->>> molrep_exe = Molrep.MolrepCommandLine(
+>>> from mbkit.apps import molrep
+>>> molrep_exe = molrep.MolrepCommandLine(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -m model.pdb
 
 2. Run Molrep to do basic molecular replacement (RF + TF) with fixed model:
 
->>> from mbkit.apps import Molrep
->>> molrep_exe = Molrep.MolrepCommandLine(
+>>> from mbkit.apps import molrep
+>>> molrep_exe = molrep.MolrepCommandLine(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", fixed_xyzin="model2.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -m model.pdb -mx model2.pdb
 
 3. Run Molrep to do basic MR (RF + TF) with input sequence and redirect output and scratch files:
 
->>> from mbkit.apps import Molrep
->>> molrep_exe = Molrep.MolrepCommandLine(
+>>> from mbkit.apps import molrep
+>>> molrep_exe = molrep.MolrepCommandLine(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", seqin="sequence.fasta", outDir="out/", outScr="scr/")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -m model.pdb -s sequence.fasta -po out/ -ps scr/
 
 4. Run Molrep to do self rotation function:
 
->>> from mbkit.apps import Molrep
->>> molrep_exe = Molrep.MolrepCommandLine(
+>>> from mbkit.apps import molrep
+>>> molrep_exe = molrep.MolrepCommandLine(
 ...     "/usr/bin/molrep", hklin="data.mtz")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz
 
 5. Run Molrep to do multicopy search using one model:
 
->>> from mbkit.apps import Molrep
->>> molrep_exe = Molrep.MolrepCommandLine(
+>>> from mbkit.apps import molrep
+>>> molrep_exe = molrep.MolrepCommandLine(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", xyzin2="model.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -m model.pdb -m2 model.pdb
 
 6. Run Molrep to do multicopy search using two models:
 
->>> from mbkit.apps import Molrep
->>> molrep_exe = Molrep.MolrepCommandLine(
+>>> from mbkit.apps import molrep
+>>> molrep_exe = molrep.MolrepCommandLine(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", xyzin2="model2.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -m model.pdb -m2 model2.pdb
 
 7. Run Molrep to fit two atomic models:
 
->>> from mbkit.apps import Molrep
->>> molrep_exe = Molrep.MolrepCommandLine(
+>>> from mbkit.apps import molrep
+>>> molrep_exe = molrep.MolrepCommandLine(
 ...     "/usr/bin/molrep", xyzin="model.pdb", fixed_xyzin="model2.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -m model.pdb -mx model2.pdb
 
 8. Run Molrep to rigid body refinement:
 
->>> from mbkit.apps import Molrep
->>> molrep_exe = Molrep.MolrepCommandLine(
+>>> from mbkit.apps import molrep
+>>> molrep_exe = molrep.MolrepCommandLine(
 ...     "/usr/bin/molrep", hklin="data.mtz", fixed_xyzin="model2.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -mx model.pdb
 
 9. Run Molrep to do basic MR (RF + TF) with keyword file input:
 
->>> from mbkit.apps import Molrep
->>> molrep_exe = Molrep.MolrepCommandLine(
+>>> from mbkit.apps import molrep
+>>> molrep_exe = molrep.MolrepCommandLine(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", keyin="keywords.txt")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -m model.pdb -k keywords.txt
 
 10. Run Molrep to fit model to EM map:
 
->>> from mbkit.apps import Molrep
->>> molrep_exe = Molrep.MolrepCommandLine(
+>>> from mbkit.apps import molrep
+>>> molrep_exe = molrep.MolrepCommandLine(
 ...     "/usr/bin/molrep", hklin="em.map", xyzin="model.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -f em.map -m model.pdb 
 
 11. Run Molrep to do basic molecular replacement (RF + TF) with input through stdin:
 
->>> from mbkit.apps import Molrep
->>> molrep_exe = Molrep.MolrepCommandLine(
+>>> from mbkit.apps import molrep
+>>> molrep_exe = molrep.MolrepCommandLine(
 ...     "/usr/bin/molrep", interactive=True, hklin="data.mtz", xyzin="model.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -m model.pdb -i

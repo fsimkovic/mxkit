@@ -11,12 +11,12 @@ Submodules
 
 .. toctree::
 
-   mbkit.apps.Dssp
-   mbkit.apps.Maxcluster
-   mbkit.apps.Molrep
-   mbkit.apps.Refmac
-   mbkit.apps.Spicker
-   mbkit.apps.TMalign
-   mbkit.apps.TMscore
-   mbkit.apps.Theseus
+   mbkit.apps.dssp
+   mbkit.apps.maxcluster
+   mbkit.apps.molrep
+   mbkit.apps.refmac
+   mbkit.apps.spicker
+   mbkit.apps.theseus
+   mbkit.apps.tmalign
+   mbkit.apps.tmscore
 

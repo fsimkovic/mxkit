@@ -2,8 +2,8 @@
 
 Examples
 --------
->>> from mbkit.apps import Dssp
->>> dssp_exe = Dssp.DsspCommandline(
+>>> from mbkit.apps import dssp
+>>> dssp_exe = dssp.DsspCommandline(
 ...     "/usr/bin/dssp", input="model.pdb", output="model.dssp"
 ... )
 >>> print(dssp_exe)

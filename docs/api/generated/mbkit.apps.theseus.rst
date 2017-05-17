@@ -1,7 +1,7 @@
-mbkit.apps.Theseus module
+mbkit.apps.theseus module
 =========================
 
-.. automodule:: mbkit.apps.Theseus
+.. automodule:: mbkit.apps.theseus
     :members:
     :undoc-members:
     :show-inheritance:

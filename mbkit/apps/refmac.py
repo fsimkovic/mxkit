@@ -9,8 +9,8 @@ Examples
 --------
 1. Run Refmac (note: The command line is constant and the stdin options control how Refmac is run):
 
->>> from mbkit.apps import Refmac
->>> refmac_exe = Refmac.RefmacCommandline(
+>>> from mbkit.apps import refmac
+>>> refmac_exe = refmac.RefmacCommandline(
 ...     "/usr/bin/refmac5", hklin="data.mtz", hklout="name.mtz", xyzin="data.pdb", xyzout="name.pdb")
 >>> print(refmac_exe)
 /usr/bin/refmac5 HKLIN data.mtz HKLOUT name.mtz XYZIN data.pdb XYZOUT name.pdb

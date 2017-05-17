@@ -1,7 +1,7 @@
-mbkit.apps.Spicker module
+mbkit.apps.spicker module
 =========================
 
-.. automodule:: mbkit.apps.Spicker
+.. automodule:: mbkit.apps.spicker
     :members:
     :undoc-members:
     :show-inheritance:

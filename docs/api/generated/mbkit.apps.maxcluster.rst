@@ -1,7 +1,7 @@
-mbkit.apps.Maxcluster module
+mbkit.apps.maxcluster module
 ============================
 
-.. automodule:: mbkit.apps.Maxcluster
+.. automodule:: mbkit.apps.maxcluster
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,7 +1,7 @@
-mbkit.apps.TMscore module
+mbkit.apps.tmalign module
 =========================
 
-.. automodule:: mbkit.apps.TMscore
+.. automodule:: mbkit.apps.tmalign
     :members:
     :undoc-members:
     :show-inheritance:

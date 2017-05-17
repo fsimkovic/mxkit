@@ -15,8 +15,8 @@ assume generally the same fold in SCOP/CATH.
 
 Examples
 --------
->>> from mbkit.apps import TMalign
->>> tm_exe = TMalign.TMalignCommandline(chain1="model1.pdb", chain2="model2.pdb")
+>>> from mbkit.apps import tmalign
+>>> tm_exe = tmalign.TMalignCommandline(chain1="model1.pdb", chain2="model2.pdb")
 >>> print(tm_exe)
 TMalign model1.pdb model2.pdb
 

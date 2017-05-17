@@ -1,7 +1,7 @@
-mbkit.apps.Molrep module
+mbkit.apps.refmac module
 ========================
 
-.. automodule:: mbkit.apps.Molrep
+.. automodule:: mbkit.apps.refmac
     :members:
     :undoc-members:
     :show-inheritance:

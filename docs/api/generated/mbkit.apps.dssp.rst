@@ -1,7 +1,7 @@
-mbkit.apps.Dssp module
+mbkit.apps.dssp module
 ======================
 
-.. automodule:: mbkit.apps.Dssp
+.. automodule:: mbkit.apps.dssp
     :members:
     :undoc-members:
     :show-inheritance:

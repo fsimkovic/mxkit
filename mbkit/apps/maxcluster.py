@@ -10,22 +10,25 @@ Examples
 --------
 1. The first option to use maxcluster is to compare two structures, i.e. an experiment and predicted structure:
 
->>> from mbkit.apps import Maxcluster
->>> maxcluster_exe = Maxcluster.MaxclusterCommandline(pdb_experiment="experiment.pdb", pdb_prediction="model.pdb")
+>>> from mbkit.apps import maxcluster
+>>> maxcluster_exe = maxcluster.MaxclusterCommandline(
+...     pdb_experiment="experiment.pdb", pdb_prediction="model.pdb")
 >>> print(maxcluster_exe)
 maxcluster -e experiment.pdb -p model.pdb
 
 2. A second option is to invoke maxcluster using a list of models in an all vs all comparisons. Just provide the list file in case you wish to run such a comparison:
 
->>> from mbkit.apps import Maxcluster
->>> maxcluster_exe = Maxcluster.MaxclusterCommandline(pdb_list="models.list")
+>>> from mbkit.apps import maxcluster
+>>> maxcluster_exe = maxcluster.MaxclusterCommandline(
+...     pdb_list="models.list")
 >>> print(maxcluster_exe)
 maxcluster -l models.list
 
 3. Finally, if you wish to compare a list of models against a single experiment structure, you can use the following syntax to do just that:
 
->>> from mbkit.apps import Maxcluster
->>> maxcluster_exe = Maxcluster.MaxclusterCommandline(pdb_list="models.list", pdb_experiment='experiment.pdb')
+>>> from mbkit.apps import maxcluster
+>>> maxcluster_exe = maxcluster.MaxclusterCommandline(
+...     pdb_list="models.list", pdb_experiment='experiment.pdb')
 >>> print(maxcluster_exe)
 maxcluster -l models.list -e experiment.pdb
 
@@ -46,7 +49,7 @@ from mbkit.apps import Switch
 
 class MaxclusterCommandline(AbstractCommandline):
 
-   def __init__(self, cmd='maxcluster', **kwargs):
+    def __init__(self, cmd='maxcluster', **kwargs):
         if not self.options_ok(**kwargs):
             msg = "Unknown combination: Please use one of the following:" \
                   "     -e [file]   PDB experiment" \
@@ -129,17 +132,14 @@ class MaxclusterCommandline(AbstractCommandline):
     @staticmethod
     def options_ok(**kwargs):
         """Check the parse options for maxcluster combinations"""
-
         # Middle option
         if 'pdb_list' in kwargs and not ('pdb_experiment' in kwargs or 'pdb_prediction' in kwargs):
             return True
-
         # Bottom option
         elif 'pdb_experiment' in kwargs and 'pdb_list' in kwargs and 'pdb_prediction' not in kwargs:
             return True
-
         # Top option
         elif 'pdb_experiment' in kwargs and 'pdb_prediction' in kwargs and 'pdb_list' not in kwargs:
             return True
-
         return False
+
