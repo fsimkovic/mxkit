@@ -154,9 +154,112 @@ class _LoadSharingFacility(_Platform):
 
 class SunGridEngine(_Platform):
     """Object to handle the Sun Grid Engine (SGE) management platform"""
-    
+
     @staticmethod
-    def qsub(command, array=None, deps=None, directory=None, hold=False, log=None, name=None, pe_opts=None, priority=None, queue=None, shell=None, time=None, *args, **kwargs):
+    def qalter(jobid, priority=None):
+        """Alter a job in the SGE queue
+        
+        Parameters
+        ----------
+        jobid : int
+           The job id to remove
+        priority : int, optional
+           The priority level of the job
+
+        Notes
+        -----
+        This function is currently still under development does not provide
+        the full range of ``qalter`` flags.
+
+        Todo
+        ----
+        * Add more functionality
+        * Add better debug message to include changed options
+
+        """
+        cmd = ["qalter"]
+        if priority:
+            cmd += ["-p", str(priority)]
+        cmd += [str(jobid)]
+        _ = mbkit.dispatch.cexectools.cexec(cmd)
+        logger.debug("Altered parameters for job %d in the queue", jobid)
+
+    @staticmethod
+    def qdel(jobid):
+        """Remove a job from the SGE queue
+        
+        Parameters
+        ----------
+        jobid : int
+           The job id to remove
+        
+        """
+        cmd = ["qdel", str(jobid)]
+        _ = mbkit.dispatch.cexectools.cexec(cmd)
+        logger.debug("Removed job %d from the queue", jobid)
+
+    @staticmethod
+    def qhold(jobid):
+        """Hold a job in the SGE queue
+        
+        Parameters
+        ----------
+        jobid : int
+           The job id to remove
+
+        """
+        cmd = ["qhold", str(jobid)]
+        _ = mbkit.dispatch.cexectools.cexec(cmd)
+        logger.debug("Holding back job %d from the queue", jobid)
+
+    @staticmethod
+    def qrls(jobid):
+        """Release a job from the SGE queue
+        
+        Parameters
+        ----------
+        jobid : int
+           The job id to remove
+
+        """
+        cmd = ["qrls", str(jobid)]
+        _ = mbkit.dispatch.cexectools.cexec(cmd)
+        logger.debug("Released job %d from the queue", jobid)
+
+    @staticmethod
+    def qstat(jobid):
+        """Obtain information about a job id
+
+        Parameters
+        ----------
+        jobid : int
+           The job id to remove
+
+        Returns
+        -------
+        dict
+           A dictionary with job specific data
+
+        """
+        cmd = ["qstat", "-j", str(jobid)]
+        stdout = mbkit.dispatch.cexectools.cexec(cmd, permit_nonzero=True)
+        data = {}
+        line_split = re.compile(':\s+')
+        for line in stdout.split(os.linesep):
+            line = line.strip()
+            if 'jobs do not exist' in line:
+                return data
+            if not line or "=" * 30 in line:
+                continue
+            else:
+                kv = line_split.split(line, 1)
+                if len(kv) == 2:
+                    data[kv[0]] = kv[1]
+        return data
+
+    @staticmethod
+    def qsub(command, array=None, deps=None, directory=None, hold=False, log=None, name=None, pe_opts=None,
+             priority=None, queue=None, shell=None, time=None, *args, **kwargs):
         """Submit a job to the SGE queue
 
         Parameters
@@ -194,7 +297,7 @@ class SunGridEngine(_Platform):
         if array:
             cmd += ["-t", "{0}-{1}".format(*array[:2]), "-tc", str(array[2])]
         if deps:
-            cmd += ["-hold_jid",  "{0}".format(",".join(map(str, deps)))]
+            cmd += ["-hold_jid", "{0}".format(",".join(map(str, deps)))]
         if hold:
             cmd += ["-h"]
         if log:
@@ -202,7 +305,7 @@ class SunGridEngine(_Platform):
         if name:
             cmd += ["-N", name]
         if pe_opts:
-            cmd += ["-pe"] + pe_opt.split()
+            cmd += ["-pe"] + pe_opts.split()
         if priority:
             cmd += ["-p", str(priority)]
         if queue:
@@ -218,51 +321,6 @@ class SunGridEngine(_Platform):
         jobid = int(stdout.split()[2].split(".")[0]) if array else int(stdout.split()[2])
         logger.debug("Job %d successfully submitted to the SGE queue", jobid)
         return jobid
-    
-    @staticmethod
-    def qstat(jobid):
-        """Obtain information about a job id
-         
-        Parameters
-        ----------
-        jobid : int
-           The job id to remove
-
-        Returns
-        -------
-        dict
-           A dictionary with job specific data
-
-        """
-        cmd = ["qstat", "-j", str(jobid)]
-        stdout = mbkit.dispatch.cexectools.cexec(cmd, permit_nonzero=True)
-        data = {}
-        line_split = re.compile(':\s+')
-        for line in stdout.split(os.linesep):
-            line = line.strip()
-            if 'jobs do not exist' in line:
-                return data
-            if not line or "=" * 30 in line:
-                continue
-            else:
-                kv = line_split.split(line, 1)
-                if len(kv) == 2:
-                    data[kv[0]] = kv[1]
-        return data
-    
-    @staticmethod
-    def qdel(jobid):
-        """Remove a job from the SGE queue
-        
-        Parameters
-        ----------
-        jobid : int
-           The job id to remove
-
-        """
-        cmd = ["qdel", str(jobid)]
-        _ = mbkit.dispatch.cexectools.cexec(cmd)
-        logger.debug("Removed job %d from the queue", jobid)
 
     @staticmethod
     def rename_array_logs(array_jobs_f, directory):

@@ -43,58 +43,18 @@ def on_cluster(cmd):
 @unittest.skipUnless(on_cluster(["qstat"]), "not on SunGridEngine platform")
 class TestSunGridEngine(unittest.TestCase):
 
-    def test_qstat_1(self):
+    def test_qalter_1(self):
         f = mbkit.apps.make_script(["sleep 100"])
         jobid = mbkit.dispatch.cluster.SunGridEngine.qsub([f], hold=True, name=inspect.stack()[0][3])
         time.sleep(5)
+        mbkit.dispatch.cluster.SunGridEngine.qalter(jobid, priority=-1)
         data = mbkit.dispatch.cluster.SunGridEngine.qstat(jobid)
         self.assertTrue(data)
         self.assertEqual(jobid, int(data['job_number']))
-        self.assertTrue('sge_o_shell' in data)
-        self.assertTrue('sge_o_workdir' in data)
-        self.assertTrue('sge_o_host' in data)
+        self.assertEqual(-100, int(data['priority']))
         mbkit.dispatch.cluster.SunGridEngine.qdel(jobid)
         os.unlink(f)
 
-    def test_qstat_2(self):
-        jobs = [mbkit.apps.make_script(["sleep 100"]) for _ in range(5)]
-        g = mbkit.util.tmp_fname(prefix='array_jobs')
-        with open(g, 'w') as f_out: 
-            f_out.write(os.linesep.join(jobs))
-        h = mbkit.apps.make_script(["script=`sed -n \"${{SGE_TASK_ID}}p\" {0}`".format(g), "$script"])
-        jobid = mbkit.dispatch.cluster.SunGridEngine.qsub([h], array=(1, 5, 5), hold=True, name=inspect.stack()[0][3])
-        time.sleep(5)
-        data = mbkit.dispatch.cluster.SunGridEngine.qstat(jobid)
-        mbkit.dispatch.cluster.SunGridEngine.qdel(jobid)
-        self.assertTrue(data)
-        self.assertEqual(jobid, int(data['job_number']))
-        self.assertTrue('sge_o_shell' in data)
-        self.assertTrue('sge_o_workdir' in data)
-        self.assertTrue('sge_o_host' in data)
-        self.assertTrue('job-array tasks' in data)
-        self.assertEqual("1-5:1", data['job-array tasks'].strip())
-        for f in jobs + [g, h]: os.unlink(f)
-    
-    def test_qsub_1(self):
-        f = mbkit.apps.make_script(["sleep 1"])
-        jobid = mbkit.dispatch.cluster.SunGridEngine.qsub([f], hold=True, name=inspect.stack()[0][3])
-        time.sleep(5)
-        self.assertTrue(mbkit.dispatch.cluster.SunGridEngine.qstat(jobid))
-        mbkit.dispatch.cluster.SunGridEngine.qdel(jobid)
-        os.unlink(f)
-
-    def test_qsub_2(self):
-        jobs = [mbkit.apps.make_script(["sleep 1"]) for _ in range(5)]
-        g = mbkit.util.tmp_fname(prefix='array_jobs')
-        with open(g, 'w') as f_out: 
-            f_out.write(os.linesep.join(jobs))
-        h = mbkit.apps.make_script(["script=`sed -n \"${{SGE_TASK_ID}}p\" {0}`".format(g), "$script"])
-        jobid = mbkit.dispatch.cluster.SunGridEngine.qsub([h], array=(1, 5, 5), hold=True, name=inspect.stack()[0][3])
-        time.sleep(5)
-        self.assertTrue(mbkit.dispatch.cluster.SunGridEngine.qstat(jobid))
-        mbkit.dispatch.cluster.SunGridEngine.qdel(jobid)
-        for f in jobs + [g, h]: os.unlink(f)
- 
     def test_qdel_1(self):
         f = mbkit.apps.make_script(["sleep 100"])
         jobid = mbkit.dispatch.cluster.SunGridEngine.qsub([f], hold=True, name=inspect.stack()[0][3]) 
@@ -114,7 +74,77 @@ class TestSunGridEngine(unittest.TestCase):
         self.assertTrue(mbkit.dispatch.cluster.SunGridEngine.qstat(jobid))
         mbkit.dispatch.cluster.SunGridEngine.qdel(jobid)
         for f in jobs + [g, h]: os.unlink(f)
-    
+
+    def test_qhold_1(self):
+        f = mbkit.apps.make_script(["sleep 100"])
+        jobid = mbkit.dispatch.cluster.SunGridEngine.qsub([f], hold=False, name=inspect.stack()[0][3])
+        time.sleep(5)
+        mbkit.dispatch.cluster.SunGridEngine.qhold(jobid)
+        mbkit.dispatch.cluster.SunGridEngine.qdel(jobid)
+        os.unlink(f)
+
+    def test_qrls_1(self):
+        f = mbkit.apps.make_script(["touch mbkit_qrls_test_1"])
+        jobid = mbkit.dispatch.cluster.SunGridEngine.qsub([f], hold=True, name=inspect.stack()[0][3])
+        time.sleep(5)
+        mbkit.dispatch.cluster.SunGridEngine.qrls(jobid)
+        while mbkit.dispatch.cluster.SunGridEngine.qstat(jobid):
+            time.sleep(2)
+        self.assertTrue(os.path.isfile('mbkit_qrls_test_1'))
+        os.unlink(f)
+
+    def test_qstat_1(self):
+        f = mbkit.apps.make_script(["sleep 100"])
+        jobid = mbkit.dispatch.cluster.SunGridEngine.qsub([f], hold=True, name=inspect.stack()[0][3])
+        time.sleep(5)
+        data = mbkit.dispatch.cluster.SunGridEngine.qstat(jobid)
+        self.assertTrue(data)
+        self.assertEqual(jobid, int(data['job_number']))
+        self.assertTrue('sge_o_shell' in data)
+        self.assertTrue('sge_o_workdir' in data)
+        self.assertTrue('sge_o_host' in data)
+        mbkit.dispatch.cluster.SunGridEngine.qdel(jobid)
+        os.unlink(f)
+
+    def test_qstat_2(self):
+        jobs = [mbkit.apps.make_script(["sleep 100"]) for _ in range(5)]
+        g = mbkit.util.tmp_fname(prefix='array_jobs')
+        with open(g, 'w') as f_out:
+            f_out.write(os.linesep.join(jobs))
+        h = mbkit.apps.make_script(["script=`sed -n \"${{SGE_TASK_ID}}p\" {0}`".format(g), "$script"])
+        jobid = mbkit.dispatch.cluster.SunGridEngine.qsub([h], array=(1, 5, 5), hold=True, name=inspect.stack()[0][3])
+        time.sleep(5)
+        data = mbkit.dispatch.cluster.SunGridEngine.qstat(jobid)
+        mbkit.dispatch.cluster.SunGridEngine.qdel(jobid)
+        self.assertTrue(data)
+        self.assertEqual(jobid, int(data['job_number']))
+        self.assertTrue('sge_o_shell' in data)
+        self.assertTrue('sge_o_workdir' in data)
+        self.assertTrue('sge_o_host' in data)
+        self.assertTrue('job-array tasks' in data)
+        self.assertEqual("1-5:1", data['job-array tasks'].strip())
+        for f in jobs + [g, h]: os.unlink(f)
+
+    def test_qsub_1(self):
+        f = mbkit.apps.make_script(["sleep 1"])
+        jobid = mbkit.dispatch.cluster.SunGridEngine.qsub([f], hold=True, name=inspect.stack()[0][3])
+        time.sleep(5)
+        self.assertTrue(mbkit.dispatch.cluster.SunGridEngine.qstat(jobid))
+        mbkit.dispatch.cluster.SunGridEngine.qdel(jobid)
+        os.unlink(f)
+
+    def test_qsub_2(self):
+        jobs = [mbkit.apps.make_script(["sleep 1"]) for _ in range(5)]
+        g = mbkit.util.tmp_fname(prefix='array_jobs')
+        with open(g, 'w') as f_out:
+            f_out.write(os.linesep.join(jobs))
+        h = mbkit.apps.make_script(["script=`sed -n \"${{SGE_TASK_ID}}p\" {0}`".format(g), "$script"])
+        jobid = mbkit.dispatch.cluster.SunGridEngine.qsub([h], array=(1, 5, 5), hold=True, name=inspect.stack()[0][3])
+        time.sleep(5)
+        self.assertTrue(mbkit.dispatch.cluster.SunGridEngine.qstat(jobid))
+        mbkit.dispatch.cluster.SunGridEngine.qdel(jobid)
+        for f in jobs + [g, h]: os.unlink(f)
+
     def test_rename_array_logs_1(self):
         directory = os.getcwd()
         jobs = [mbkit.apps.make_script(["sleep 100"], directory=directory) for _ in range(5)]
