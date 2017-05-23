@@ -51,7 +51,7 @@ class TestSunGridEngine(unittest.TestCase):
         data = mbkit.dispatch.cluster.SunGridEngine.qstat(jobid)
         self.assertTrue(data)
         self.assertEqual(jobid, int(data['job_number']))
-        self.assertEqual(-100, int(data['priority']))
+        self.assertEqual(-1, int(data['priority']))
         mbkit.dispatch.cluster.SunGridEngine.qdel(jobid)
         os.unlink(f)
 
