@@ -78,6 +78,11 @@ class Job(object):
             self._qtype = qtype.lower()
         else:
             raise ValueError("Unknown platform")
+        
+    def __str__(self):
+        return "{0}(pid={1} qtype={2}".format(
+            self.__class__.__name__, self.pid, self.qtype    
+        )
     
     @property
     def finished(self):

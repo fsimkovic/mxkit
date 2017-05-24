@@ -1,5 +1,4 @@
 """Module to store local job management code"""
-from django.conf.urls.static import static
 
 __author__ = "Felix Simkovic"
 __date__ = "09 May 2017"
