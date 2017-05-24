@@ -1,4 +1,5 @@
 """Module to store local job management code"""
+from django.conf.urls.static import static
 
 __author__ = "Felix Simkovic"
 __date__ = "09 May 2017"
@@ -9,7 +10,7 @@ import multiprocessing
 import os
 import time
 
-import mbkit.dispatch.cexectools
+from mbkit.dispatch.cexectools import cexec
 
 logger = logging.getLogger()
 
@@ -46,7 +47,7 @@ class Worker(multiprocessing.Process):
         for job in iter(self.queue.get, None):
             if self.success_state.value:
                 continue
-            stdout = mbkit.dispatch.cexectools.cexec([job], directory=self.directory, permit_nonzero=self.permit_nonzero)
+            stdout = cexec([job], directory=self.directory, permit_nonzero=self.permit_nonzero)
             with open(job.rsplit('.', 1)[0] + '.log', 'w') as f_out:
                 f_out.write(stdout)
             if callable(self.check_success):
@@ -54,6 +55,9 @@ class Worker(multiprocessing.Process):
                     self.success_state.value = True
                 time.sleep(1)
     
+
+# Store a reference to the Workers
+WORKERS = None
 
 class LocalJobServer(object):
     """A local server to execute jobs via the multiprocessing module
@@ -101,7 +105,40 @@ class LocalJobServer(object):
     """
 
     @staticmethod
-    def sub(command, check_success=None, directory=None, nproc=1, permit_nonzero=False, time=None, *args, **kwargs):
+    def jdel(jobid):
+        """Remove a job from the local process list
+        
+        Parameters
+        ----------
+        jobid : int
+           The job id to remove
+        
+        """
+        if WORKERS:
+            for wk in WORKERS:
+                if wk.is_alive():
+                    wk.terminate()
+            logger.debug("Terminated job %d", jobid)
+        else:
+            logger.debug("Job %d not in queue", jobid)
+
+    @staticmethod
+    def jstat(jobid):
+        """Obtain information about a job id
+        
+        Parameters
+        ----------
+        jobid : int
+           The job id to remove
+        
+        """
+        if WORKERS and any(wk.is_alive() for wk in WORKERS):
+            return {'pid': jobid, 'status': "Running"}
+        else:
+            return {}
+
+    @staticmethod
+    def jsub(command, check_success=None, directory=None, nproc=1, permit_nonzero=False, runtime=None, *args, **kwargs):
         """Submission function for local job submission via ``multiprocessing``
         
         Parameters
@@ -116,7 +153,7 @@ class LocalJobServer(object):
            The number of processors to use
         permit_nonzero : bool, optional
            Allow non-zero return codes [default: False]
-        time : int, optional
+        runtime : int, optional
            The maximum runtime of the job in seconds
 
         Raises
@@ -130,10 +167,13 @@ class LocalJobServer(object):
             raise ValueError(msg)
         
         # Create a new queue
+        global WORKERS
         queue = multiprocessing.Queue()
         success_state = multiprocessing.Value('b', False)
+        
         # Create workers equivalent to the number of jobs
-        workers = []
+        global WORKERS
+        WORKERS = workers = []
         for _ in range(nproc):
             wp = Worker(queue, success_state, check_success=check_success, directory=directory, permit_nonzero=permit_nonzero)
             wp.start()
@@ -143,8 +183,9 @@ class LocalJobServer(object):
             queue.put(cmd)
         # Stop workers from exiting without completion
         for _ in range(nproc):
-            queue.put(None) 
-        # Start the workers
-        for wp in workers:
-            wp.join(time)
-
+            queue.put(None)
+        # Disallow addition of further jobs
+        queue.close()
+        # Need this in case we kill the job immediately after submitting
+        time.sleep(0.1)
+        return queue._opid
