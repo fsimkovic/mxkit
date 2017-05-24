@@ -177,3 +177,8 @@ class Job(object):
         else:
             logger.debug("Function unavailable for specified queue type")
             return {}
+        
+    def wait(self):
+        """Wait until all processing has finished"""
+        while not self.finished:
+            time.sleep(5)
