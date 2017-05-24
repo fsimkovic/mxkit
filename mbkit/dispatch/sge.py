@@ -157,7 +157,7 @@ class SunGridEngine(object):
             # Write all jobs into an array.jobs file
             array_jobs = os.path.join(directory, 'array.jobs')
             with open(array_jobs, 'w') as f_out:
-                f_out.write(os.linesep.join(script))
+                f_out.write(os.linesep.join(command))
             # Create the actual executable script
             array_script = os.path.join(directory, "array.script")
             with open(array_script, 'w') as f_out:
