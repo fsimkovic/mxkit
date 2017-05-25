@@ -3,6 +3,22 @@
 import tempfile
 
 
+def tmp_dir(directory=None, prefix='tmp', suffix=""):
+    """Return a filename for a temporary directory 
+
+    Parameters
+    ----------
+    directory : str, optional
+       Path to a directory to write the files to.
+    prefix : str, optional
+       A prefix to the temporary filename
+    suffix : str, optional
+       A suffix to the temporary filename
+
+    """
+    return tempfile.mkdtemp(dir=directory, prefix=prefix, suffix=suffix)
+
+
 def tmp_fname(delete=False, directory=None, prefix='tmp', suffix=""):
     """Return a filename for a temporary file
 
