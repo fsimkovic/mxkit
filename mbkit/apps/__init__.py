@@ -145,43 +145,6 @@ class Switch(_Switch):
             return []
 
 
-def make_python_script(cmd, directory=None, prefix='mbkit_', suffix='.py'):
-    """Create an executable Python script
-
-    Parameters
-    ----------
-    cmd : list
-       The command to be written to the script. This can be a 1-dimensional 
-       or 2-dimensional list, depending on the Python commands to run.
-    directory : str, optional
-       The directory to create the script in
-    prefix : str, optional
-       The script prefix [default: ``mbkit_``]
-    suffix : str, optional
-       The script suffix [default: ``.py``]
-
-    Returns
-    -------
-    str
-       The path to the script
-
-    """
-    if directory is None:
-        directory = os.getcwd()
-    else:
-        directory = os.path.abspath(directory)
-    script = mbkit.util.tmp_fname(directory=directory, prefix=prefix, suffix=suffix)
-    with open(script, 'w') as f_out:
-        f_out.write("#!/usr/bin/env python" + os.linesep)
-        if isinstance(cmd, list) and isinstance(cmd[0], list):
-            for c in cmd:
-                f_out.write(' '.join(map(str, c)) + os.linesep)
-        elif isinstance(cmd, list):
-            f_out.write(' '.join(map(str, cmd)) + os.linesep)
-    os.chmod(script, 0o777)
-    return script
-
-
 def make_script(cmd, directory=None, prefix='mbkit_', suffix=SCRIPT_EXT):
     """Create an executable script
 
@@ -209,12 +172,51 @@ def make_script(cmd, directory=None, prefix='mbkit_', suffix=SCRIPT_EXT):
         directory = os.path.abspath(directory)
     script = mbkit.util.tmp_fname(directory=directory, prefix=prefix, suffix=suffix)
     with open(script, 'w') as f_out:
-        f_out.write(SCRIPT_HEADER + os.linesep)
+        content = SCRIPT_HEADER + os.linesep
         if isinstance(cmd, list) and isinstance(cmd[0], list):
             for c in cmd:
-                f_out.write(' '.join(map(str, c)) + os.linesep)
+                content += ' '.join(map(str, c)) + os.linesep
         elif isinstance(cmd, list):
-            f_out.write(' '.join(map(str, cmd)) + os.linesep)
+            content += ' '.join(map(str, cmd)) + os.linesep
+        f_out.write(content)
+    os.chmod(script, 0o777)
+    return script
+
+
+def make_python_script(cmd, directory=None, prefix='mbkit_', suffix='.py'):
+    """Create an executable Python script
+
+    Parameters
+    ----------
+    cmd : list
+       The command to be written to the script. This can be a 1-dimensional 
+       or 2-dimensional list, depending on the Python commands to run.
+    directory : str, optional
+       The directory to create the script in
+    prefix : str, optional
+       The script prefix [default: ``mbkit_``]
+    suffix : str, optional
+       The script suffix [default: ``.py``]
+
+    Returns
+    -------
+    str
+       The path to the script
+
+    """
+    if directory is None:
+        directory = os.getcwd()
+    else:
+        directory = os.path.abspath(directory)
+    script = mbkit.util.tmp_fname(directory=directory, prefix=prefix, suffix=suffix)
+    with open(script, 'w') as f_out:
+        content = "#!/usr/bin/env python" + os.linesep
+        if isinstance(cmd, list) and isinstance(cmd[0], list):
+            for c in cmd:
+                content += ' '.join(map(str, c)) + os.linesep
+        elif isinstance(cmd, list):
+            content += ' '.join(map(str, cmd)) + os.linesep
+        f_out.write(content)
     os.chmod(script, 0o777)
     return script
 
