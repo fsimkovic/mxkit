@@ -17,17 +17,13 @@ logger = logging.getLogger()
 class Worker(multiprocessing.Process):
     """Simple manual worker class to execute jobs in the queue"""
 
-    def __init__(self, queue, success_state, check_success=None, directory=None, permit_nonzero=False):
+    def __init__(self, queue, directory=None, permit_nonzero=False):
         """Instantiate a new worker
 
         Parameters
         ----------
         queue : obj
            An instance of a :obj:`Queue <multiprocessing.Queue>`
-        success_state : obj
-           An instance of a :obl:`Value <multiprocessing.Value>`
-        check_success : func, optional
-           A callable function to check the success of a job
         directory : str, optional
            The directory to execute the jobs in
         permit_nonzero : bool, optional
@@ -35,25 +31,17 @@ class Worker(multiprocessing.Process):
 
         """
         super(Worker, self).__init__()
-        self.check_success = check_success
         self.directory = directory
         self.permit_nonzero = permit_nonzero
-        self.success_state = success_state
         self.queue = queue
 
     def run(self):
         """Method representing the process's activity"""
         for job in iter(self.queue.get, None):
-            if self.success_state.value:
-                continue
             stdout = cexec([job], directory=self.directory, permit_nonzero=self.permit_nonzero)
             with open(job.rsplit('.', 1)[0] + '.log', 'w') as f_out:
                 f_out.write(stdout)
-            if callable(self.check_success):
-                if self.check_success(job):
-                    self.success_state.value = True
-                time.sleep(1)
-    
+ 
 
 # Store a reference to the Workers
 WORKERS = None
@@ -80,26 +68,6 @@ class LocalJobServer(object):
     Sometimes you might want to submit many jobs where you know that some are going to fail. In this 
     case, you can also use the :obj:`LocalJobServer` and provide the ``permit_nonzero`` keyword argument,
     which will allow non-zero return codes from commands.
-
-    If you you intend to submit jobs, and want to terminate execution prematurely because you are only
-    interested in one job succeeding, you can provide a function handle via the ``check_success`` keyword.
-
-    >>> from mbkit.apps import make_python_script
-    >>> from mbkit.dispatch.local import LocalJobServer
-    >>> def succ_func(j):
-    ...     with open(j.rsplit('.', 1)[0] + '.log') as f_in:
-    ...         lines = f_in.readlines()
-    ...     return any("job 3" in l for l in lines)
-    >>> scripts = [
-    ...     make_python_script(["import sys;", "print('job {0}');".format(i), "sys.exit(0);"])
-    ...     for i in range(5)
-    ... ]
-    >>> LocalJobServer.sub(scripts, nproc=2, check_success=succ_func)
-
-    In this example, we create and provde the :func:`succ_func` to the :func:`sub <LocalJobServer.sub>` call.
-    As jobs are executed, each worker checks if that particular job was successful via :func:`succ_func`,
-    and if so the entire execution process will terminate. **Note, only log files for the executed jobs will 
-    be created.**
 
     """
 
@@ -137,15 +105,13 @@ class LocalJobServer(object):
             return {}
 
     @staticmethod
-    def jsub(command, check_success=None, directory=None, nproc=1, permit_nonzero=False, runtime=None, *args, **kwargs):
+    def jsub(command, directory=None, nproc=1, permit_nonzero=False, runtime=None, *args, **kwargs):
         """Submission function for local job submission via ``multiprocessing``
         
         Parameters
         ----------
         command : list
            A list with the final command
-        check_success : func, optional
-           A callable function to check the success of a job
         directory : str, optional
            The directory to execute the jobs in
         nproc : int, optional
@@ -155,26 +121,15 @@ class LocalJobServer(object):
         runtime : int, optional
            The maximum runtime of the job in seconds
 
-        Raises
-        ------
-        ValueError
-           check_success option requires a callable function
-
         """
-        if check_success and not callable(check_success):
-            msg = "check_success option requires a callable function/object: {0}".format(check_success)
-            raise ValueError(msg)
-        
         # Create a new queue
-        global WORKERS
         queue = multiprocessing.Queue()
-        success_state = multiprocessing.Value('b', False)
         
         # Create workers equivalent to the number of jobs
         global WORKERS
         WORKERS = workers = []
         for _ in range(nproc):
-            wp = Worker(queue, success_state, check_success=check_success, directory=directory, permit_nonzero=permit_nonzero)
+            wp = Worker(queue, directory=directory, permit_nonzero=permit_nonzero)
             wp.start()
             workers.append(wp)
         # Add each command to the queue

@@ -4,6 +4,7 @@ __author__ = "Felix Simkovic"
 __date__ = "24 May 2017"
 __version__ = "0.2"
 
+import logging
 import os
 import time
 import warnings
@@ -15,6 +16,8 @@ from mbkit.dispatch.sge import SunGridEngine
 # Keep track of which platforms we can handle
 KNOWN_PLATFORMS = ["local", "lsf", "sge"]
 
+logger = logging.getLogger(__name__)
+
 
 class Job(object):
     """Generic :obj:`Job` class to allow for job control
@@ -23,6 +26,7 @@ class Job(object):
     platforms with a unified interface.
     
     """
+    __slots__ = ["_lock", "_log", "_pid", "_qtype", "_script"]
     
     # Submission functions
     _SUB_F = {
@@ -55,8 +59,6 @@ class Job(object):
         "sge": SunGridEngine.qalter,
     }
     
-    __slots__ = ["_lock", "_pid", "_qtype"]
-    
     def __init__(self, qtype):
         """Instantiate a new :obj:`Job` submission class
         
@@ -73,6 +75,9 @@ class Job(object):
         """
         self._lock = False
         self._pid = None
+        self._log = []
+        self._script = []
+
         # Check immediately if we have a known platform
         if qtype.lower() in KNOWN_PLATFORMS:
             self._qtype = qtype.lower()
@@ -89,6 +94,11 @@ class Job(object):
         """Return whether the job has finished"""
         # Empty dictionaries default to False
         return not bool(self.stat())
+
+    @property
+    def log(self):
+        """Return a list of the log file(s)"""
+        return self._log
     
     @property
     def pid(self):
@@ -99,6 +109,11 @@ class Job(object):
     def qtype(self):
         """Return the platform type we assigned to this job"""
         return self._qtype
+
+    @property
+    def script(self):
+        """Return a list of the script file(s)"""
+        return self._script
     
     def alter(self, priority=None):
         """Alter the job parameters
@@ -159,15 +174,19 @@ class Job(object):
             logger.debug("This Job instance is locked, for further submissions create a new")
             return
         
-        # Define a directory is not already done
+        # Define a directory if not already done
         if not('directory' in kwargs and kwargs['directory']):
             kwargs['directory'] = os.getcwd()
     
-        # Quick check if all scripts are sound
-        if not all(os.path.isfile(fpath) for fpath in script):
-            raise ValueError("One or more scripts cannot be found")
-        elif not all(os.access(fpath, os.X_OK) for fpath in script):
-            raise ValueError("One or more scripts are not executable")
+        # Quick check if all scripts are sound - Also keep copy of logs and scripts
+        if isinstance(script, str) and os.path.isfile(script) and os.access(script, os.X_OK):
+            self._log = [script.rsplit('.', 1)[0] + '.log']
+            self._script = [script]
+        elif (isinstance(script, list) or isinstance(script, tuple)) and all(os.path.isfile(fpath) for fpath in script) and all(os.access(fpath, os.X_OK) for fpath in script):
+            self._log = [s.rsplit('.', 1)[0] + '.log' for s in script]
+            self._script = list(script)
+        else:
+            raise ValueError("One or more scripts cannot be found or are not executable")
         
         # Get the submission function and submit the job
         self._pid = Job._SUB_F[self.qtype](script, **kwargs)
@@ -183,7 +202,37 @@ class Job(object):
             logger.debug("Function unavailable for specified queue type")
             return {}
         
-    def wait(self):
-        """Wait until all processing has finished"""
+    def wait(self, check_success=None, interval=30, monitor=None):
+        """Wait until all processing has finished
+        
+        Parameters
+        ----------
+        check_success : func, optional
+           A function handler to be called to check the success status of a job
+           !!! The function is required to take a single argument, a log file !!!
+        interval : int, optional
+           The interval to wait between checking (in seconds) [default: 30]
+        monitor : func, optional
+           A function handler to be called to update, e.g. GUIs
+
+        """
+        do_check_success = bool(check_success and callable(check_success))
+        if do_check_success:
+            logger.debug("Checking for Job %d success with function %s", self.pid, check_success.__name__) 
+        do_monitor = bool(monitor and callable(monitor))
+
         while not self.finished:
-            time.sleep(5)
+            # Allow for early termination
+            if do_check_success:
+                for log in self.log:
+                    if os.path.isfile(log) and check_success(log):
+                        logger.debug("Job %d succeeded, run log: %s", self.pid, log)
+                        self.kill()
+
+
+            # Allow for GUI updating
+            if do_monitor:
+                monitor()
+            # Wait if nothing else
+            time.sleep(interval)
+        
