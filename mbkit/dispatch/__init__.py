@@ -210,8 +210,11 @@ class Job(object):
         Parameters
         ----------
         check_success : func, optional
-           A function handler to be called to check the success status of a job
+           A function handler to be called to check the success status of a job.
+           If the function returns True, the execution will be terminated.
+
            !!! The function is required to take a single argument, a log file !!!
+
         interval : int, optional
            The interval to wait between checking (in seconds) [default: 30]
         monitor : func, optional
