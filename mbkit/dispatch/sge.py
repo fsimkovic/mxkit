@@ -165,16 +165,16 @@ class SunGridEngine(object):
                 f_out.write(os.linesep.join([
                     "#!/bin/sh", 
                     "script=`sed -n \"${{SGE_TASK_ID}}p\" {0}`".format(array_jobs),
-                    "log=\"${script%.*}\".log"
+                    "log=\"${script%.*}\".log",
                     "$script > $log 2>&1",
                 ]))
-            # Overwrite the command
-            command = [array_script]
             # Add command-line flags
             cmd += ["-t", "1-{0}".format(len(command)), "-tc", "{0}".format(len(command))]
             # Redirect the log file and reset if provided
             cmd += ["-j", "y", "-o", "/dev/null"]
             log = None
+            # Overwrite the command
+            command = [array_script]
             # Save status
             array = True
         else:
