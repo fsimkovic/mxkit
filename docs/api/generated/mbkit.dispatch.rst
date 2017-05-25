@@ -12,6 +12,7 @@ Submodules
 .. toctree::
 
    mbkit.dispatch.cexectools
-   mbkit.dispatch.cluster
    mbkit.dispatch.local
+   mbkit.dispatch.lsf
+   mbkit.dispatch.sge
 
