@@ -11,7 +11,7 @@ import time
 
 from mbkit.dispatch.cexectools import cexec
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 
 class Worker(multiprocessing.Process):
