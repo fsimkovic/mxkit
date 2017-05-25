@@ -182,7 +182,9 @@ class Job(object):
         if isinstance(script, str) and os.path.isfile(script) and os.access(script, os.X_OK):
             self._log = [script.rsplit('.', 1)[0] + '.log']
             self._script = [script]
-        elif (isinstance(script, list) or isinstance(script, tuple)) and all(os.path.isfile(fpath) for fpath in script) and all(os.access(fpath, os.X_OK) for fpath in script):
+        elif (isinstance(script, list) or isinstance(script, tuple)) 
+             and all(os.path.isfile(fpath) for fpath in script) 
+             and all(os.access(fpath, os.X_OK) for fpath in script):
             self._log = [s.rsplit('.', 1)[0] + '.log' for s in script]
             self._script = list(script)
         else:
@@ -228,8 +230,6 @@ class Job(object):
                     if os.path.isfile(log) and check_success(log):
                         logger.debug("Job %d succeeded, run log: %s", self.pid, log)
                         self.kill()
-
-
             # Allow for GUI updating
             if do_monitor:
                 monitor()
