@@ -175,6 +175,10 @@ class SunGridEngine(object):
             # Redirect the log file and reset if provided
             cmd += ["-j", "y", "-o", "/dev/null"]
             log = None
+            # Save status
+            array = True
+        else:
+            array = False
         if deps:
             cmd += ["-hold_jid", "{0}".format(",".join(map(str, deps)))]
         if hold:
