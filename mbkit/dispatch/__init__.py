@@ -84,7 +84,19 @@ class Job(object):
         else:
             raise ValueError("Unknown platform")
         
-    def __str__(self):
+    def __del__(self):
+        """Delete the last reference to this class
+
+        Notes
+        -----
+        If your job is still running, it will also be terminated
+
+        """
+        if not self.finished:
+            self.kill()
+
+    def __repr__(self):
+        """Representation of the :obj:`Job`"""
         return "{0}(pid={1} qtype={2}".format(
             self.__class__.__name__, self.pid, self.qtype    
         )
