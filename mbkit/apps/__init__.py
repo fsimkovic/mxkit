@@ -55,19 +55,6 @@ class AbstractCommandline(AbstractCommandline):
                 commandline.extend(parameter._as_list())
         return commandline
     
-#     def _as_script(self, directory=None):
-#         """Write the command line to a script
-# 
-#         Parameters
-#         ----------
-#         directory : str
-#            The path to a directory for scripts
-# 
-#         """
-#         if directory is None:
-#             directory = os.getcwd()
-#         return make_script(self._as_list(), directory=directory)
-
     @staticmethod
     def find_exec(program, dirs=None):
         """Find the executable exename.
@@ -217,7 +204,9 @@ def make_python_script(cmd, directory=None, prefix=None, stem=None, suffix='.py'
         directory = os.getcwd()
     else:
         directory = os.path.abspath(directory)
-    script = _script_name(directory, prefix, stem, suffix)
+    # Get the script name
+    script = mbkit.util.tmp_fname(delete=True, directory=directory, prefix=prefix, stem=stem, suffix=suffix)
+    # Write the contents to the file
     with open(script, 'w') as f_out:
         content = "#!/usr/bin/env python" + os.linesep
         if isinstance(cmd, list) and isinstance(cmd[0], list):
