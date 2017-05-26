@@ -37,6 +37,8 @@ class AbstractCommandline(AbstractCommandline):
 
     def __init__(self, cmd, **kwargs):
         """Initialise a new :obj:`AbstractCommandline`"""
+        self._stdin = None
+        
         cmd = AbstractCommandline.find_exec(cmd)
         super(AbstractCommandline, self).__init__(cmd, **kwargs)
 
@@ -53,18 +55,18 @@ class AbstractCommandline(AbstractCommandline):
                 commandline.extend(parameter._as_list())
         return commandline
     
-    def _as_script(self, directory=None):
-        """Write the command line to a script
-
-        Parameters
-        ----------
-        directory : str
-           The path to a directory for scripts
-
-        """
-        if directory is None:
-            directory = os.getcwd()
-        return make_script(self._as_list(), directory=directory)
+#     def _as_script(self, directory=None):
+#         """Write the command line to a script
+# 
+#         Parameters
+#         ----------
+#         directory : str
+#            The path to a directory for scripts
+# 
+#         """
+#         if directory is None:
+#             directory = os.getcwd()
+#         return make_script(self._as_list(), directory=directory)
 
     @staticmethod
     def find_exec(program, dirs=None):
@@ -145,9 +147,9 @@ class Switch(_Switch):
             return []
 
 
-def make_script(cmd, directory=None, prefix='mbkit_', suffix=SCRIPT_EXT):
+def make_script(cmd, directory=None, prefix=None, stem=None, suffix=SCRIPT_EXT):
     """Create an executable script
-
+    
     Parameters
     ----------
     cmd : list
@@ -156,21 +158,26 @@ def make_script(cmd, directory=None, prefix='mbkit_', suffix=SCRIPT_EXT):
     directory : str, optional
        The directory to create the script in
     prefix : str, optional
-       The script prefix [default: ``mbkit_``]
+       The script prefix [default: None]
+    stem : str, optional
+       The steam part of the script name
     suffix : str, optional
        The script suffix [default: POSIX - ``.sh``, Windows - ``.bat``]
-
+    
     Returns
     -------
     str
        The path to the script
 
     """
+    # Sort out any directory issues
     if directory is None:
         directory = os.getcwd()
     else:
         directory = os.path.abspath(directory)
-    script = mbkit.util.tmp_fname(directory=directory, prefix=prefix, suffix=suffix)
+    # Get the script name
+    script = mbkit.util.tmp_fname(delete=True, directory=directory, prefix=prefix, stem=stem, suffix=suffix)
+    # Write the contents to the file
     with open(script, 'w') as f_out:
         content = SCRIPT_HEADER + os.linesep
         if isinstance(cmd, list) and isinstance(cmd[0], list):
@@ -183,7 +190,7 @@ def make_script(cmd, directory=None, prefix='mbkit_', suffix=SCRIPT_EXT):
     return script
 
 
-def make_python_script(cmd, directory=None, prefix='mbkit_', suffix='.py'):
+def make_python_script(cmd, directory=None, prefix=None, stem=None, suffix='.py'):
     """Create an executable Python script
 
     Parameters
@@ -194,7 +201,9 @@ def make_python_script(cmd, directory=None, prefix='mbkit_', suffix='.py'):
     directory : str, optional
        The directory to create the script in
     prefix : str, optional
-       The script prefix [default: ``mbkit_``]
+       The script prefix [default: None]
+    stem : str, optional
+       The steam part of the script name
     suffix : str, optional
        The script suffix [default: ``.py``]
 
@@ -208,7 +217,7 @@ def make_python_script(cmd, directory=None, prefix='mbkit_', suffix='.py'):
         directory = os.getcwd()
     else:
         directory = os.path.abspath(directory)
-    script = mbkit.util.tmp_fname(directory=directory, prefix=prefix, suffix=suffix)
+    script = _script_name(directory, prefix, stem, suffix)
     with open(script, 'w') as f_out:
         content = "#!/usr/bin/env python" + os.linesep
         if isinstance(cmd, list) and isinstance(cmd[0], list):
@@ -219,4 +228,3 @@ def make_python_script(cmd, directory=None, prefix='mbkit_', suffix='.py'):
         f_out.write(content)
     os.chmod(script, 0o777)
     return script
-
