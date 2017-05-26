@@ -10,7 +10,6 @@ import os
 import re
 import shutil
 
-from mbkit.apps import make_script, SCRIPT_EXT
 from mbkit.dispatch.cexectools import cexec
 from mbkit.util import tmp_fname
 
@@ -196,14 +195,15 @@ class SunGridEngine(object):
     def _prep_array(commands, directory):
         """Prepare multiple jobs to be an array"""
         # Write all jobs into an array.jobs file
-        array_jobs = tmp_fname(directory=directory, suffix='.jobs')
+        array_jobs = tmp_fname(directory=directory, prefix="array_", suffix='.jobs')
         with open(array_jobs, 'w') as f_out:
             f_out.write(os.linesep.join(commands) + os.linesep)
         # Create the actual executable script
-        array_script = make_script(
-            [["script=`sed -n \"${{SGE_TASK_ID}}p\" {0}`".format(array_jobs)],
-             ["log=\"${script%.*}\".log"],
-             ["$script", ">", "$log", "2>&1"]],
-            directory=directory, suffix=".script"
-        )
+        array_script = array_jobs.replace(".jobs", ".script")
+        with open(array_script, "w") as f_out:
+            content = "#!/bin/sh\n"
+            content += "script=`sed -n \"${{SGE_TASK_ID}}p\" {0}`\n".format(array_jobs)
+            content += "log=\"${script%.*}\".log\n"
+            content += "$script", ">", "$log", "2>&1\n"
+            f_out.write(content)
         return array_script, array_jobs
