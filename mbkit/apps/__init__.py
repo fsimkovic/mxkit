@@ -23,6 +23,7 @@ from Bio.Application import _Option
 from Bio.Application import _Switch
 from Bio.Application import _escape_filename
 
+import mbkit.dispatch.cexectools
 import mbkit.util
 
 # OS-dependent script headers and extensions
@@ -43,8 +44,19 @@ class AbstractCommandline(AbstractCommandline):
         super(AbstractCommandline, self).__init__(cmd, **kwargs)
 
     def __call__(self, *args, **kwargs):
-        """Overwrite parent __call__"""
-        raise AttributeError("Execution of {0} disabled".format(self.__class__.__name__))
+        """Overwrite parent __call__
+        
+        Returns
+        -------
+        str
+           STDOUT
+        
+        See Also
+        --------
+        mbkit.dispatch.cexectools.cexec
+        
+        """
+        return mbkit.dispatch.cexectools.cexec(*args, **kwargs)
 
     def _as_list(self):
         """Return the command line as list"""
