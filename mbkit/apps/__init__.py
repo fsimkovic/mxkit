@@ -38,8 +38,6 @@ class AbstractCommandline(AbstractCommandline):
 
     def __init__(self, cmd, **kwargs):
         """Initialise a new :obj:`AbstractCommandline`"""
-        self._stdin = None
-        
         cmd = AbstractCommandline.find_exec(cmd)
         super(AbstractCommandline, self).__init__(cmd, **kwargs)
 
@@ -56,7 +54,7 @@ class AbstractCommandline(AbstractCommandline):
         mbkit.dispatch.cexectools.cexec
         
         """
-        return mbkit.dispatch.cexectools.cexec(*args, **kwargs)
+        return mbkit.dispatch.cexectools.cexec(self._as_list(), *args, **kwargs)
 
     def _as_list(self):
         """Return the command line as list"""

@@ -14,7 +14,7 @@ Examples
 1. Run Molrep to do basic molecular replacement (RF + TF):
 
 >>> from mbkit.apps import molrep
->>> molrep_exe = molrep.MolrepCommandLine(
+>>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -m model.pdb
@@ -22,7 +22,7 @@ Examples
 2. Run Molrep to do basic molecular replacement (RF + TF) with fixed model:
 
 >>> from mbkit.apps import molrep
->>> molrep_exe = molrep.MolrepCommandLine(
+>>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", fixed_xyzin="model2.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -m model.pdb -mx model2.pdb
@@ -30,7 +30,7 @@ Examples
 3. Run Molrep to do basic MR (RF + TF) with input sequence and redirect output and scratch files:
 
 >>> from mbkit.apps import molrep
->>> molrep_exe = molrep.MolrepCommandLine(
+>>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", seqin="sequence.fasta", outDir="out/", outScr="scr/")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -m model.pdb -s sequence.fasta -po out/ -ps scr/
@@ -38,7 +38,7 @@ Examples
 4. Run Molrep to do self rotation function:
 
 >>> from mbkit.apps import molrep
->>> molrep_exe = molrep.MolrepCommandLine(
+>>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz
@@ -46,7 +46,7 @@ Examples
 5. Run Molrep to do multicopy search using one model:
 
 >>> from mbkit.apps import molrep
->>> molrep_exe = molrep.MolrepCommandLine(
+>>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", xyzin2="model.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -m model.pdb -m2 model.pdb
@@ -54,7 +54,7 @@ Examples
 6. Run Molrep to do multicopy search using two models:
 
 >>> from mbkit.apps import molrep
->>> molrep_exe = molrep.MolrepCommandLine(
+>>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", xyzin2="model2.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -m model.pdb -m2 model2.pdb
@@ -62,7 +62,7 @@ Examples
 7. Run Molrep to fit two atomic models:
 
 >>> from mbkit.apps import molrep
->>> molrep_exe = molrep.MolrepCommandLine(
+>>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", xyzin="model.pdb", fixed_xyzin="model2.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -m model.pdb -mx model2.pdb
@@ -70,7 +70,7 @@ Examples
 8. Run Molrep to rigid body refinement:
 
 >>> from mbkit.apps import molrep
->>> molrep_exe = molrep.MolrepCommandLine(
+>>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz", fixed_xyzin="model2.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -mx model.pdb
@@ -78,7 +78,7 @@ Examples
 9. Run Molrep to do basic MR (RF + TF) with keyword file input:
 
 >>> from mbkit.apps import molrep
->>> molrep_exe = molrep.MolrepCommandLine(
+>>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", keyin="keywords.txt")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -m model.pdb -k keywords.txt
@@ -86,7 +86,7 @@ Examples
 10. Run Molrep to fit model to EM map:
 
 >>> from mbkit.apps import molrep
->>> molrep_exe = molrep.MolrepCommandLine(
+>>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="em.map", xyzin="model.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -f em.map -m model.pdb 
@@ -94,7 +94,7 @@ Examples
 11. Run Molrep to do basic molecular replacement (RF + TF) with input through stdin:
 
 >>> from mbkit.apps import molrep
->>> molrep_exe = molrep.MolrepCommandLine(
+>>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", interactive=True, hklin="data.mtz", xyzin="model.pdb")
 >>> print(molrep_exe)
 /usr/bin/molrep -f data.mtz -m model.pdb -i
@@ -153,20 +153,11 @@ class MolrepCommandline(AbstractCommandline):
                    '',
                    equate=False,
                    filename=True),
-            Option(['-po', 'outDir'],
+            Option(['-po', 'out_dir'],
                    '',
                    equate=False),
-            Option(['-ps', 'outScr'],
+            Option(['-ps', 'out_scr'],
                    '',
                    equate=False),
-
-            #Argument(['model'],
-            #         "Input model structure",
-            #         filename=True,
-            #         is_required=True),
-            #Argument(['native'],
-            #          "Input native structure",
-            #          filename=True,
-            #          is_required=True),
         ]
         AbstractCommandline.__init__(self, cmd, **kwargs)
