@@ -4,7 +4,7 @@ import os
 import tempfile
 
 
-def tmp_dir(directory=None, prefix='tmp', suffix=""):
+def tmp_dir(directory=None, prefix="tmp", suffix=""):
     """Return a filename for a temporary directory 
 
     Parameters
@@ -20,7 +20,7 @@ def tmp_dir(directory=None, prefix='tmp', suffix=""):
     return tempfile.mkdtemp(dir=directory, prefix=prefix, suffix=suffix)
 
 
-def tmp_fname(delete=False, directory=None, prefix='tmp', stem=None, suffix=""):
+def tmp_fname(delete=False, directory=None, prefix="tmp", stem=None, suffix=""):
     """Return a filename for a temporary file
 
     The naming convention of scripts will be ``prefix`` + ``stem`` + ``suffix``.
@@ -40,7 +40,7 @@ def tmp_fname(delete=False, directory=None, prefix='tmp', stem=None, suffix=""):
 
     """
     if directory is None:
-        directory = tmp_dir()
+        directory = tempfile.gettempdir()
     if stem is None:
         tmpf = tempfile.NamedTemporaryFile(delete=delete, dir=directory, prefix=prefix, suffix=suffix)
         tmpf.close()
@@ -50,3 +50,4 @@ def tmp_fname(delete=False, directory=None, prefix='tmp', stem=None, suffix=""):
         if not delete:
             open(tmpf, 'w').close()
         return tmpf
+
