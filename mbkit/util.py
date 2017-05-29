@@ -40,9 +40,9 @@ def tmp_fname(delete=False, directory=None, prefix='tmp', stem=None, suffix=""):
 
     """
     if directory is None:
-        directory = tempfile.gettempdir()
+        directory = tmp_dir()
     if stem is None:
-        tmpf = tempfile.NamedTemporaryFile(delete=False, dir=directory, prefix=prefix, suffix=suffix)
+        tmpf = tempfile.NamedTemporaryFile(delete=delete, dir=directory, prefix=prefix, suffix=suffix)
         tmpf.close()
         return tmpf.name
     else:
