@@ -82,7 +82,7 @@ class TestSunGridEngine(unittest.TestCase):
         map(os.unlink, jobs)
 
     def test_qrls_1(self):
-        jobs = [make_script("touch mbkit_qrls_test_1")]
+        jobs = [make_script(["touch", "mbkit_qrls_test_1"])]
         jobid = SunGridEngine.qsub(jobs, hold=True, name=inspect.stack()[0][3])
         time.sleep(5)
         SunGridEngine.qrls(jobid)
