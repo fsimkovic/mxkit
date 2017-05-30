@@ -39,7 +39,7 @@ class LoadSharingFacility(object):
         if "Done successfully" in stdout:
             return {}
         else:
-            return {'pid': jobid, 'status': "Running"}
+            return {'job_number': jobid, 'status': "Running"}
 
     @staticmethod
     def bkill(jobid):
@@ -143,7 +143,7 @@ class LoadSharingFacility(object):
 
         """
         # Prepare the command
-        cmd = ["bsub", "-cwd"]
+        cmd = ["bsub", "-cwd", directory if directory else os.getcwd()]
         if len(command) > 1:
             if directory is None:
                 directory = os.getcwd()
@@ -159,7 +159,7 @@ class LoadSharingFacility(object):
         if log:
             cmd += ["-o", log]
         if name:
-            cmd += ["-J", name]
+            cmd += ["-J", '"{0}"'.format(name)]
         if priority:
             cmd += ["-sp", str(priority)]
         if queue:

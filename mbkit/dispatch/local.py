@@ -100,7 +100,7 @@ class LocalJobServer(object):
         
         """
         if WORKERS and any(wk.is_alive() for wk in WORKERS):
-            return {'pid': jobid, 'status': "Running"}
+            return {'job_number': jobid, 'status': "Running"}
         else:
             return {}
 
