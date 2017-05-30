@@ -61,7 +61,7 @@ class LocalJobServer(object):
     ...     make_python_script(["import sys;", "print('hello');", "sys.exit(0);"])
     ...     for _ in range(3)
     ... ]
-    >>> LocalJobServer.sub(scripts, nproc=2)
+    >>> LocalJobServer.jsub(scripts, nproc=2)
 
     This will create three Python script files and execute them by calling :func:`sub <LocalJobServer.sub>`. 
     
@@ -105,7 +105,7 @@ class LocalJobServer(object):
             return {}
 
     @staticmethod
-    def jsub(command, directory=None, nproc=1, permit_nonzero=False, runtime=None, *args, **kwargs):
+    def jsub(command, directory=None, nproc=1, permit_nonzero=False, *args, **kwargs):
         """Submission function for local job submission via ``multiprocessing``
         
         Parameters
