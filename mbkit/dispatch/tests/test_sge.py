@@ -10,37 +10,10 @@ import time
 import unittest
 
 from mbkit.apps import make_script
-from mbkit.dispatch.cexectools import cexec
 from mbkit.dispatch.sge import SunGridEngine
 
 
-def on_cluster(cmd):
-    """Little wrapper function to test whether we are on a specified cluster
-
-    Parameters
-    ----------
-    cmd : list
-       A command (with options) to run. This should normally be something
-       simple, such as ``qstat`` on the SunGridEngine platform
-
-    Returns
-    -------
-    bool
-       A boolean to indicate if we are on that particular cluster
-
-    """
-    try:
-        cexec(cmd)
-    # Command/file not found
-    except OSError:
-        return False
-    # Non-zero return code
-    except RuntimeError:
-        return False
-    return True
-
-
-@unittest.skipUnless(on_cluster(["qstat"]), "not on SunGridEngine platform")
+@unittest.skipUnless("SGE_ROOT" in os.environ, "not on SunGridEngine platform")
 class TestSunGridEngine(unittest.TestCase):
 
     def test_qalter_1(self):
