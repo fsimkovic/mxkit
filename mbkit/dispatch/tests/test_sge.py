@@ -48,7 +48,7 @@ class TestSunGridEngine(unittest.TestCase):
 
     def test_qhold_1(self):
         jobs = [make_script(["sleep 100"])]
-        jobid = SunGridEngine.qsub(jobs, hold=False, name=inspect.stack()[0][3])
+        jobid = SunGridEngine.qsub(jobs, hold=False, name=inspect.stack()[0][3], log=os.devnull)
         time.sleep(5)
         SunGridEngine.qhold(jobid)
         SunGridEngine.qdel(jobid)
@@ -56,7 +56,7 @@ class TestSunGridEngine(unittest.TestCase):
 
     def test_qrls_1(self):
         jobs = [make_script(["touch", "mbkit_qrls_test_1"])]
-        jobid = SunGridEngine.qsub(jobs, hold=True, name=inspect.stack()[0][3])
+        jobid = SunGridEngine.qsub(jobs, hold=True, name=inspect.stack()[0][3], log=os.devnull)
         time.sleep(5)
         SunGridEngine.qrls(jobid)
         start, timeout = time.time(), False
@@ -124,7 +124,8 @@ class TestSunGridEngine(unittest.TestCase):
     
     def test_qsub_3(self):
         directory = os.getcwd()
-        jobs = [make_script(["sleep 5"], directory=directory) for _ in range(5)]
+        jobs = [make_script([["sleep 5"], ['echo "file {0}"'.format(i)]], directory=directory) 
+                for i in range(5)]
         jobid = SunGridEngine.qsub(jobs, name=inspect.stack()[0][3])
         start, timeout = time.time(), False
         while SunGridEngine.qstat(jobid):
@@ -139,13 +140,44 @@ class TestSunGridEngine(unittest.TestCase):
             map(os.unlink, glob.glob(u'*.script'))
             self.assertEqual(1, 0, "Timeout")
         else:
-            for j in jobs:
+            for i, j in enumerate(jobs):
                 f = j.replace(".sh", ".log")
                 self.assertTrue(os.path.isfile(f))
+                content = open(f).read().strip()
+                self.assertEqual("file {0}".format(i), content)
                 os.unlink(f)
         map(os.unlink, jobs)
         map(os.unlink, glob.glob(u'*.jobs'))
         map(os.unlink, glob.glob(u'*.script'))
+
+    def test_qsub_4(self):
+        directory = os.getcwd()
+        jobs = [make_script(['echo "file {0}"'.format(i)], directory=directory) 
+                for i in range(100)]
+        jobid = SunGridEngine.qsub(jobs, name=inspect.stack()[0][3])
+        start, timeout = time.time(), False
+        while SunGridEngine.qstat(jobid):
+            # Don't wait too long, one minute, then fail
+            if ((time.time() - start) // 60) >= 1:
+                SunGridEngine.qdel(jobid)
+                timeout = True
+            time.sleep(10)
+        if timeout:
+            map(os.unlink, jobs)
+            map(os.unlink, glob.glob(u'*.jobs'))
+            map(os.unlink, glob.glob(u'*.script'))
+            self.assertEqual(1, 0, "Timeout")
+        else:
+            for i, j in enumerate(jobs):
+                f = j.replace(".sh", ".log")
+                self.assertTrue(os.path.isfile(f))
+                content = open(f).read().strip()
+                self.assertEqual("file {0}".format(i), content)
+                os.unlink(f)
+        map(os.unlink, jobs)
+        map(os.unlink, glob.glob(u'*.jobs'))
+        map(os.unlink, glob.glob(u'*.script'))
+
 
 
 if __name__ == "__main__":
