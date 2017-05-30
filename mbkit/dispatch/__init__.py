@@ -48,14 +48,17 @@ class Job(object):
     }
     # Hold functions
     _HOLD_F = {
+        "lsf": LoadSharingFacility.bstop,
         "sge": SunGridEngine.qhold,
     }
     # Release functions
     _RLS_F = {
+        "lsf": LoadSharingFacility.bresume,
         "sge": SunGridEngine.qrls,
     }
     # Alter functions
     _ALT_F = {
+        "lsf": LoadSharingFacility.bmod,
         "sge": SunGridEngine.qalter,
     }
     
@@ -65,7 +68,7 @@ class Job(object):
         Parameters
         ----------
         qtype : str
-           The queue type to submit the jobs to [ local | sge ]
+           The queue type to submit the jobs to [ local | lsf | sge ]
         
         Raises
         ------
@@ -138,7 +141,7 @@ class Job(object):
         """
         alt_func = Job._ALT_F.get(self.qtype, None)
         if self.pid and callable(alt_func):
-            return alt_func(self.pid)
+            return alt_func(self.pid, priority=priority)
         else:
             logger.debug("Function unavailable for specified queue type")
     
@@ -250,4 +253,3 @@ class Job(object):
                 monitor()
             # Wait if nothing else
             time.sleep(interval)
-        

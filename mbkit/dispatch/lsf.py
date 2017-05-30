@@ -1,37 +1,122 @@
 """Module to store LoadSharingFacility cluster management platform code"""
 
 __author__ = "Felix Simkovic"
-__date__ = "08 May 2017"
+__date__ = "30 May 2017"
 __version__ = "0.1"
 
 import logging
 import os
 
 from mbkit.dispatch.cexectools import cexec
+from mbkit.util import tmp_fname
 
 logger = logging.getLogger(__name__)
 
 
 class LoadSharingFacility(object):
-    """Object to handle the Load Sharing Facility (LSF) management platform
-    
-    Warnings
-    --------
-    This platform is not yet fully supported. The code in this class might work
-    but no guarantees can be given. Please report any bugs to the developers.
+    """Object to handle the Load Sharing Facility (LSF) management platform"""
 
-    """
-    
     @staticmethod
-    def bsub(command, array=None, deps=None, directory=None, log=None, name=None, pe_opts=None, priority=None, queue=None, shell=None, time=None, *args, **kwargs):
+    def bjobs(jobid):
+        """Obtain information about a job id
+         
+        Parameters
+        ----------
+        jobid : int
+           The job id to remove
+
+        Returns
+        -------
+        dict
+           A dictionary with job specific data
+        
+        Todo
+        ----
+        * Extract the correct information
+    
+        """
+        stdout = cexec(["bjobs", "-l", str(jobid)])
+        if "Done successfully" in stdout:
+            return {}
+        else:
+            return {'pid': jobid, 'status': "Running"}
+
+    @staticmethod
+    def bkill(jobid):
+        """Remove a job from the LSF queue
+        
+        Parameters
+        ----------
+        jobid : int
+           The job id to remove
+
+        """
+        cexec(["bkill", str(jobid)])
+        logger.debug("Removed job %d from the queue", jobid)
+
+    @staticmethod
+    def bmod(jobid, priority=None):
+        """Alter a job in the LSF queue
+
+        Parameters
+        ----------
+        jobid : int
+           The job id to remove
+        priority : int, optional
+           The priority level of the job
+
+        Notes
+        -----
+        This function is currently still under development does not provide
+        the full range of ``bmod`` flags.
+
+        Todo
+        ----
+        * Add better debug message to include changed options
+
+        """
+        cmd = ["bmod"]
+        if priority:
+            cmd += ["-sp", str(priority)]
+        cmd += [str(jobid)]
+        cexec(cmd)
+        logger.debug("Altered parameters for job %d in the queue", jobid)
+
+    @staticmethod
+    def bresume(jobid):
+        """Release a job from the LSF queue
+
+        Parameters
+        ----------
+        jobid : int
+           The job id to remove
+
+        """
+        cexec(["bresume", str(jobid)])
+        logger.debug("Released job %d from the queue", jobid)
+
+    @staticmethod
+    def bstop(jobid):
+        """Hold a job in the LSF queue
+
+        Parameters
+        ----------
+        jobid : int
+           The job id to remove
+
+        """
+        cexec(["bstop", str(jobid)])
+        logger.debug("Holding back job %d from the queue", jobid)
+
+    @staticmethod
+    def bsub(command, deps=None, directory=None, log=None, name=None, priority=None, queue=None,
+             time=None, threads=None, *args, **kwargs):
         """Submit a job to the LSF queue
 
         Parameters
         ----------
         command : list
            A list with the final command
-        array : tuple, optional
-           An array specific tuple in format (start, stop, max) [Unused]
         deps : list, optional
            A list of dependency job ids
         directory : str, optional
@@ -55,15 +140,22 @@ class LoadSharingFacility(object):
         ------
         RuntimeError
            Array submission not yet implemented
-    
+
         """
         # Prepare the command
         cmd = ["bsub", "-cwd"]
-        if array:
-            msg = "Array submission not yet implemented"
-            raise RuntimeError(msg)
+        if len(command) > 1:
+            if directory is None:
+                directory = os.getcwd()
+            array_script, array_jobs = LoadSharingFacility._prep_array(command, directory)
+            # Add command-line flags
+            name = name if name else "mbkit"
+            cmd += ["-J", "{0}[1-{1}]%{1}".format(name, len(command))]
+            # Overwrite some defaults
+            command = [array_script]
+            log = os.devnull
         if deps:
-            cmd += ["-w",  " && ".join(["done(%s)" % dep for dep in map(str, deps)])]
+            cmd += ["-w", " && ".join(["done(%s)" % dep for dep in map(str, deps)])]
         if log:
             cmd += ["-o", log]
         if name:
@@ -74,6 +166,8 @@ class LoadSharingFacility(object):
             cmd += ["-q", queue]
         if time:
             cmd += ["-W", str(time)]
+        if threads:
+            cmd += ["-R", '"span[ptile={0}]"'.format(threads)]
         cmd += ["<"] + map(str, command)
         # Submit the job
         stdout = cexec(cmd, directory=directory)
@@ -81,58 +175,20 @@ class LoadSharingFacility(object):
         jobid = int(stdout.split()[1][1:-1])
         logger.debug("Job %d successfully submitted to the LSF queue", jobid)
         return jobid
-   
-    @staticmethod
-    def bjobs(jobid):
-        """Obtain information about a job id
-         
-        Parameters
-        ----------
-        jobid : int
-           The job id to remove
-
-        Returns
-        -------
-        dict
-           A dictionary with job specific data
-
-        """
-        logger.critical("Not yet implemented")
-        return {}
-    
-    @staticmethod
-    def bkill(jobid):
-        """Remove a job from the LSF queue
-        
-        Parameters
-        ----------
-        jobid : int
-           The job id to remove
-
-        """
-        cexec(["bkill", str(jobid)])
-        logger.debug("Removed job %d from the queue", jobid)
 
     @staticmethod
-    def rename_array_logs(array_jobs_f, directory):
-        """Rename a set of array logs to match the names of the scripts
-
-        Parameters
-        ----------
-        array_jobs_f : str
-           The path to the 'array.jobs' file
-        directory : str
-           The directory containing the 'arrayJob_X.log' files
-
-        Raises
-        ------
-        ValueError
-           Number of scripts and logs non-identical
-
-        """
-        logger.debug("Array job file provided for renaming logs: %s", array_jobs_f)
-        logger.critical("Not yet implemented")
-
-
-
-
+    def _prep_array(commands, directory):
+        """Prepare multiple jobs to be an array"""
+        # Write all jobs into an array.jobs file
+        array_jobs = tmp_fname(directory=directory, prefix="array_", suffix='.jobs')
+        with open(array_jobs, 'w') as f_out:
+            f_out.write(os.linesep.join(commands) + os.linesep)
+        # Create the actual executable script
+        array_script = array_jobs.replace(".jobs", ".script")
+        with open(array_script, "w") as f_out:
+            content = "#!/bin/sh\n"
+            content += "script=`sed -n \"${{SGE_TASK_ID}}p\" {0}`\n".format(array_jobs)
+            content += "log=\"${script%.*}\".log\n"
+            content += "$script > $log 2>&1\n"
+            f_out.write(content)
+        return array_script, array_jobs
