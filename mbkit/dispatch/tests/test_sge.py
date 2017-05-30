@@ -140,9 +140,9 @@ class TestSunGridEngine(unittest.TestCase):
             self.assertEqual(1, 0, "Timeout")
         else:
             for j in jobs:
-                l = os.path.isfile(j.replace(".sh", ".log"))
-                self.assertTrue(l)
-                os.unlink(l)
+                f = j.replace(".sh", ".log")
+                self.assertTrue(os.path.isfile(f))
+                os.unlink(f)
         map(os.unlink, jobs)
         map(os.unlink, glob.glob(u'*.jobs'))
         map(os.unlink, glob.glob(u'*.script'))

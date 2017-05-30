@@ -186,9 +186,9 @@ class LoadSharingFacility(object):
         # Create the actual executable script
         array_script = array_jobs.replace(".jobs", ".script")
         with open(array_script, "w") as f_out:
-            content = "#!/bin/sh\n"
-            content += "script=`sed -n \"${{SGE_TASK_ID}}p\" {0}`\n".format(array_jobs)
-            content += "log=\"${script%.*}\".log\n"
-            content += "$script > $log 2>&1\n"
+            content = '#!/bin/bash\n'
+            content += 'script=`sed -n "${{LSB_JOBINDEX}}p" {0}`\n'.format(array_jobs)
+            content += 'log="${script%.*}".log\n'
+            content += '$script > $log 2>&1\n'
             f_out.write(content)
         return array_script, array_jobs
