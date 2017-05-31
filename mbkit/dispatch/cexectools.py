@@ -6,6 +6,7 @@ __version__ = "1.0"
 
 import logging
 import os
+import shutil
 import signal
 import subprocess
 import sys
@@ -75,6 +76,13 @@ def prep_array_scripts(scripts, directory, task_env):
     task_env : str
        The task environment variable
 
+    Returns
+    -------
+    str
+       The array script
+    str
+       The file listing all jobs
+
     """
     # Write all jobs into an array.jobs file
     array_jobs = tmp_fname(directory=directory, prefix="array_", suffix='.jobs')
@@ -84,10 +92,9 @@ def prep_array_scripts(scripts, directory, task_env):
     array_script = array_jobs.replace(".jobs", ".script")
     with open(array_script, "w") as f_out:
         # Construct the content for the file
-        content = "#!/bin/sh{linesep}"
-        content += "script=`sed -n \"${{{task_env}}}p\" {array_jobs}`{linesep}"
-        content += "$script{linesep}"
-        content = content.format(array_jobs=array_jobs, linesep=os.linesep,
-                                 task_env=task_env)
+        content = "#!/bin/sh" + os.linesep
+        content += "script=`sed -n \"${" + task_env + "}p\" " + array_jobs + "`" + os.linesep
+        content += "log=\"${script%.*}.log\"" + os.linesep
+        content += "$script > $log" + os.linesep
         f_out.write(content)
     return array_script, array_jobs

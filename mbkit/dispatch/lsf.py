@@ -7,8 +7,7 @@ __version__ = "0.1"
 import logging
 import os
 
-from mbkit.dispatch.cexectools import cexec
-from mbkit.util import tmp_fname
+from mbkit.dispatch.cexectools import cexec, prep_array_scripts
 
 logger = logging.getLogger(__name__)
 
@@ -133,6 +132,8 @@ class LoadSharingFacility(object):
            The queue to submit the job to
         shell : str, optional
            The absolute path to the shell to run the job in
+        threads : int, optional
+           The maximum number of threads available to a job
         time : int, optional
            The maximum runtime of the job in seconds
 
@@ -147,7 +148,7 @@ class LoadSharingFacility(object):
         if len(command) > 1:
             if directory is None:
                 directory = os.getcwd()
-            array_script, array_jobs = LoadSharingFacility._prep_array(command, directory)
+            array_script, array_jobs = prep_array_scripts(command, directory, "LSB_JOBINDEX")
             # Add command-line flags
             name = name if name else "mbkit"
             cmd += ["-J", "{0}[1-{1}]%{1}".format(name, len(command))]
@@ -164,10 +165,10 @@ class LoadSharingFacility(object):
             cmd += ["-sp", str(priority)]
         if queue:
             cmd += ["-q", queue]
-        if time:
-            cmd += ["-W", str(time)]
         if threads:
             cmd += ["-R", '"span[ptile={0}]"'.format(threads)]
+        if time:
+            cmd += ["-W", str(time)]
         cmd += ["<"] + map(str, command)
         # Submit the job
         stdout = cexec(cmd, directory=directory)
@@ -175,20 +176,3 @@ class LoadSharingFacility(object):
         jobid = int(stdout.split()[1][1:-1])
         logger.debug("Job %d successfully submitted to the LSF queue", jobid)
         return jobid
-
-    @staticmethod
-    def _prep_array(commands, directory):
-        """Prepare multiple jobs to be an array"""
-        # Write all jobs into an array.jobs file
-        array_jobs = tmp_fname(directory=directory, prefix="array_", suffix='.jobs')
-        with open(array_jobs, 'w') as f_out:
-            f_out.write(os.linesep.join(commands) + os.linesep)
-        # Create the actual executable script
-        array_script = array_jobs.replace(".jobs", ".script")
-        with open(array_script, "w") as f_out:
-            content = '#!/bin/sh\n'
-            content += 'script=`sed -n "${{SGE_TASK_ID}}p" {0}`\n'.format(array_jobs)
-            content += 'log="${script%.*}.log"\n'
-            content += '$script > $log\n'
-            f_out.write(content)
-        return array_script, array_jobs

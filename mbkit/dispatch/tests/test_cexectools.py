@@ -42,44 +42,48 @@ class Test(unittest.TestCase):
         self.assertEqual(directory, stdout)
 
     def test_prep_array_scripts_1(self):
-        scripts = ["/path/to/script1.sh", "/path/to/script2.sh"]
+        scripts = [os.path.join(os.getcwd(), "script1.sh"), os.path.join(os.getcwd(), "script2.sh")]
         array_script, array_jobs = mbkit.dispatch.cexectools.prep_array_scripts(scripts, os.getcwd(), "SGE_TASK_ID")
         array_jobs_content = [l.strip() for l in open(array_jobs).readlines()]
         self.assertEqual(scripts, array_jobs_content)
         array_script_content = [l.strip() for l in open(array_script).readlines()]
-        self.assertEqual(["#!/bin/sh", "script=`sed -n \"${{SGE_TASK_ID}}p\" {0}`".format(array_jobs), "$script"],
+        self.assertEqual(["#!/bin/sh", "script=`sed -n \"${SGE_TASK_ID}p\" " + array_jobs + "`",
+                          "log=\"${script%.*}.log\"", "$script > $log"],
                          array_script_content)
         map(os.remove, [array_script, array_jobs])
 
     def test_prep_array_scripts_2(self):
-        scripts = ["/path/to/script1.sh", "/path/to/script2.sh"]
+        scripts = [os.path.join(os.getcwd(), "script1.sh"), os.path.join(os.getcwd(), "script2.sh")]
         array_script, array_jobs = mbkit.dispatch.cexectools.prep_array_scripts(scripts, os.getcwd(), "LSB_JOBINDEX")
         array_jobs_content = [l.strip() for l in open(array_jobs).readlines()]
         self.assertEqual(scripts, array_jobs_content)
         array_script_content = [l.strip() for l in open(array_script).readlines()]
-        self.assertEqual(["#!/bin/sh", "script=`sed -n \"${{LSB_JOBINDEX}}p\" {0}`".format(array_jobs), "$script"],
+        self.assertEqual(["#!/bin/sh", "script=`sed -n \"${LSB_JOBINDEX}p\" " + array_jobs + "`",
+                          "log=\"${script%.*}.log\"", "$script > $log"],
                          array_script_content)
         map(os.remove, [array_script, array_jobs])
 
     def test_prep_array_scripts_3(self):
-        scripts = ["/path/to/script1.sh", "/path/to/script2.sh"]
+        scripts = [os.path.join(os.getcwd(), "script1.sh"), os.path.join(os.getcwd(), "script2.sh")]
         array_script, array_jobs = mbkit.dispatch.cexectools.prep_array_scripts(scripts, os.getcwd(), "RANDOM_TEXT")
         array_jobs_content = [l.strip() for l in open(array_jobs).readlines()]
         self.assertEqual(scripts, array_jobs_content)
         array_script_content = [l.strip() for l in open(array_script).readlines()]
-        self.assertEqual(["#!/bin/sh", "script=`sed -n \"${{RANDOM_TEXT}}p\" {0}`".format(array_jobs), "$script"],
+        self.assertEqual(["#!/bin/sh", "script=`sed -n \"${RANDOM_TEXT}p\" " + array_jobs + "`",
+                          "log=\"${script%.*}.log\"", "$script > $log"],
                          array_script_content)
         map(os.remove, [array_script, array_jobs])
 
     def test_prep_array_scripts_4(self):
-        scripts = ["/path/to/script1.sh", "/path/to/script2.sh"]
+        scripts = [os.path.join(os.getcwd(), "script1.sh"), os.path.join(os.getcwd(), "script2.sh")]
         array_script, array_jobs = mbkit.dispatch.cexectools.prep_array_scripts(scripts, "mbkit", "RANDOM_TEXT")
         self.assertEqual(os.path.abspath("mbkit"), os.path.dirname(array_script))
         self.assertEqual(os.path.abspath("mbkit"), os.path.dirname(array_jobs))
         array_jobs_content = [l.strip() for l in open(array_jobs).readlines()]
         self.assertEqual(scripts, array_jobs_content)
         array_script_content = [l.strip() for l in open(array_script).readlines()]
-        self.assertEqual(["#!/bin/sh", "script=`sed -n \"${{RANDOM_TEXT}}p\" {0}`".format(array_jobs), "$script"],
+        self.assertEqual(["#!/bin/sh", "script=`sed -n \"${RANDOM_TEXT}p\" " + array_jobs + "`",
+                          "log=\"${script%.*}.log\"", "$script > $log"],
                          array_script_content)
         map(os.remove, [array_script, array_jobs])
 
