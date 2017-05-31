@@ -179,8 +179,7 @@ class TestSunGridEngine(unittest.TestCase):
         map(os.unlink, glob.glob(u'*.script'))
 
     def test_qsub_5(self):
-        os.environ["CCP4_SCR"] = os.path.join(os.getcwd(), "mbkit")
-        jobs = [make_script(["echo $CCP4_SCR"], directory=os.environ["CCP4_SCR"]) for _ in range(2)]
+        jobs = [make_script(["echo $CCP4_SCR"], directory=os.getcwd()) for _ in range(2)]
         jobid = SunGridEngine.qsub(jobs, name=inspect.stack()[0][3])
         start, timeout = time.time(), False
         while SunGridEngine.qstat(jobid):
