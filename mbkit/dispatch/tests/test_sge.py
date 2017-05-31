@@ -178,6 +178,33 @@ class TestSunGridEngine(unittest.TestCase):
         map(os.unlink, glob.glob(u'*.jobs'))
         map(os.unlink, glob.glob(u'*.script'))
 
+    def test_qsub_5(self):
+        os.environ["CCP4_SCR"] = os.path.join(os.getcwd(), "mbkit")
+        jobs = [make_script(["echo $CCP4_SCR"], directory=os.environ["CCP4_SCR"]) for _ in range(2)]
+        jobid = SunGridEngine.qsub(jobs, name=inspect.stack()[0][3])
+        start, timeout = time.time(), False
+        while SunGridEngine.qstat(jobid):
+            # Don't wait too long, one minute, then fail
+            if ((time.time() - start) // 60) >= 1:
+                SunGridEngine.qdel(jobid)
+                timeout = True
+            time.sleep(10)
+        if timeout:
+            map(os.unlink, jobs)
+            map(os.unlink, glob.glob(u'*.jobs'))
+            map(os.unlink, glob.glob(u'*.script'))
+            self.assertEqual(1, 0, "Timeout")
+        else:
+            for i, j in enumerate(jobs):
+                f = j.replace(".sh", ".log")
+                self.assertTrue(os.path.isfile(f))
+                content = open(f).read().strip()
+                self.assertEqual(os.environ["CCP4_SCR"], content)
+                os.unlink(f)
+        map(os.unlink, jobs)
+        map(os.unlink, glob.glob(u'*.jobs'))
+        map(os.unlink, glob.glob(u'*.script'))
+
 
 
 if __name__ == "__main__":
