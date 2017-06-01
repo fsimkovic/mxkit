@@ -14,6 +14,7 @@ Submodules
    mbkit.apps.dssp
    mbkit.apps.maxcluster
    mbkit.apps.molrep
+   mbkit.apps.phaser
    mbkit.apps.refmac
    mbkit.apps.spicker
    mbkit.apps.theseus

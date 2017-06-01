@@ -19,6 +19,7 @@ Submodules
 
 .. toctree::
 
+   mbkit.chemistry
    mbkit.util
    mbkit.version
 
