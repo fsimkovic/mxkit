@@ -46,11 +46,11 @@ except ImportError:
     msg = "Error: numpydoc must be installed before generating this documentation"
     raise ImportError(msg)
 
-try:
-    import sphinx_bootstrap_theme
-except ImportError:
-    msg = "Error: sphinx_bootstrap_theme must be installed before generating this documentation"
-    raise ImportError(msg)
+# try:
+#     import sphinx_bootstrap_theme
+# except ImportError:
+#     msg = "Error: sphinx_bootstrap_theme must be installed before generating this documentation"
+#     raise ImportError(msg)
 
 try:
     import mbkit.version 
@@ -116,21 +116,22 @@ autodoc_docstring_signature = True
 # -- Options for HTML output ----------------------------------------------
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+#html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'bootstrap'
+# html_theme = 'bootstrap'
+html_theme = 'classic'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-html_theme_options = {
-    # Bootswatch (http://bootswatch.com/) theme.
-    'bootswatch_theme': "spacelab",
-    # Choose Bootstrap version.
-    'bootstrap_version': "3",
-}
+# html_theme_options = {
+#     # Bootswatch (http://bootswatch.com/) theme.
+#     'bootswatch_theme': "spacelab",
+#     # Choose Bootstrap version.
+#     'bootstrap_version': "3",
+# }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
