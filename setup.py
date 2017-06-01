@@ -81,7 +81,7 @@ CLASSIFIERS = [
 ]
 
 TEST_REQUIREMENTS = [
-    "nose >=0.10.4",
+    "nose >=1.3.7",
 ] + ["unittest2 >=1.1.0" if sys.version_info < (2, 7) else ""]
 
 # Do the actual setup below
