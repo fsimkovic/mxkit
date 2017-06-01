@@ -40,7 +40,6 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
-    'sphinxext.math_symbol_table',
     'numpydoc.numpydoc'
 ]
 
