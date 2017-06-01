@@ -72,12 +72,17 @@ CLASSIFIERS = [
     "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
+    "Programming Language :: Python :: 2.6",
     "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3.4",
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
+
+TEST_REQUIREMENTS = [
+    "nose >=0.10.4",
+] + ["unittest2 >=1.1.0" if sys.version_info < (2, 7) else ""]
 
 # Do the actual setup below
 setup(
@@ -95,7 +100,7 @@ setup(
     platforms=PLATFORMS,
     classifiers=CLASSIFIERS,
     test_suite='nose.collector',
-    tests_require=['nose >=1.3.7'],
+    tests_require=TEST_REQUIREMENTS,
     include_package_data=True,
     zip_safe=False,
 )
