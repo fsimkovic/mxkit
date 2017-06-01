@@ -21,9 +21,6 @@ If this has completed successfully, you are good to go and you can now install M
 
 MbKit is now successfully installed in your system's default Python.
 
-.. note::
-
-   Similarly to the :ref:`Python Package Index` install, the executable scripts are automatically installed.
 
 External software
 ~~~~~~~~~~~~~~~~~
