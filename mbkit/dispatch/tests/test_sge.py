@@ -179,7 +179,7 @@ class TestSunGridEngine(unittest.TestCase):
         map(os.unlink, glob.glob(u'*.script'))
 
     def test_qsub_5(self):
-        jobs = [make_script(["echo $CCP4_SCR"], directory=os.getcwd()) for _ in range(2)]
+        jobs = [make_script(["echo $SGE_ROOT"], directory=os.getcwd()) for _ in range(2)]
         jobid = SunGridEngine.qsub(jobs, name=inspect.stack()[0][3])
         start, timeout = time.time(), False
         while SunGridEngine.qstat(jobid):
@@ -198,7 +198,7 @@ class TestSunGridEngine(unittest.TestCase):
                 f = j.replace(".sh", ".log")
                 self.assertTrue(os.path.isfile(f))
                 content = open(f).read().strip()
-                self.assertEqual(os.environ["CCP4_SCR"], content)
+                self.assertEqual(os.environ["SGE_ROOT"], content)
                 os.unlink(f)
         map(os.unlink, jobs)
         map(os.unlink, glob.glob(u'*.jobs'))
