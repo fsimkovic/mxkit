@@ -116,7 +116,7 @@ class SunGridEngine(object):
 
     @staticmethod
     def qsub(command, deps=None, directory=None, hold=False, log=None, name=None, pe_opts=None,
-             priority=None, queue=None, runtime=None, shell=None, threads=None, time=None, *args, **kwargs):
+             priority=None, queue=None, runtime=None, shell=None, threads=None, *args, **kwargs):
         """Submit a job to the SGE queue
 
         Parameters
@@ -145,8 +145,6 @@ class SunGridEngine(object):
            The absolute path to the shell to run the job in
         threads : int, optional
            The maximum number of threads available to a job
-        time : int, optional
-           The maximum runtime of the job in seconds
 
         """
         # Prepare the command with default options
@@ -160,8 +158,8 @@ class SunGridEngine(object):
             cmd += ["-t", "1-{0}".format(len(command)), "-tc", "{0}".format(len(command))]
             # Overwrite some defaults
             command = [array_script]
-            log = os.devnull
-            shell = "/bin/bash"
+            log = os.devnull        # Reset this!
+            shell = "/bin/bash"     # Required for script!
             # Save status
             array = True
         else:
@@ -187,8 +185,6 @@ class SunGridEngine(object):
             cmd += ["-S", shell]
         if threads:
             cmd += ["-pe mpi", str(threads)]
-        if time:
-            cmd += ["-l", "h_rt={0}".format(time)]
 
         cmd += map(str, command)
         # Submit the job
