@@ -6,8 +6,13 @@ __date__ = "10 May 2017"
 import glob
 import inspect
 import os
+import sys
 import time
-import unittest
+
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
 
 from mbkit.apps import make_script
 from mbkit.dispatch.sge import SunGridEngine

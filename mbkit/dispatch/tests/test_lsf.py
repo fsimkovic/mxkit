@@ -6,8 +6,13 @@ __date__ = "30 May 2017"
 import glob
 import inspect
 import os
+import sys
 import time
-import unittest
+
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
 
 from mbkit.apps import make_script
 from mbkit.dispatch.lsf import LoadSharingFacility
@@ -55,18 +60,6 @@ class TestLoadSharingFacility(unittest.TestCase):
         map(os.unlink, jobs)
         map(os.unlink, glob.glob(u'*.jobs'))
         map(os.unlink, glob.glob(u'*.script'))
-
-    def test_bmod_1(self):
-        jobs = [make_script(["sleep 100"])]
-        jobid = LoadSharingFacility.bsub(jobs, hold=True, name=inspect.stack()[0][3])
-        time.sleep(5)
-        LoadSharingFacility.bmod(jobid, priority=-1)
-        data = LoadSharingFacility.bjobs(jobid)
-        self.assertTrue(data)
-        self.assertEqual(jobid, int(data['job_number']))
-        self.assertEqual(-1, int(data['priority']))
-        LoadSharingFacility.bkill(jobid)
-        map(os.unlink, jobs)
 
     def test_bresume_1(self):
         jobs = [make_script(["touch", "mbkit_bresume_test_1"])]
@@ -154,6 +147,7 @@ class TestLoadSharingFacility(unittest.TestCase):
                 LoadSharingFacility.bkill(jobid)
                 timeout = True
             time.sleep(10)
+        time.sleep(20)
         if timeout:
             map(os.unlink, jobs)
             map(os.unlink, glob.glob(u'*.jobs'))
@@ -171,7 +165,7 @@ class TestLoadSharingFacility(unittest.TestCase):
         map(os.unlink, glob.glob(u'*.script'))
 
     def test_bsub_5(self):
-        jobs = [make_script(["echo $CCP4_SCR"], directory=os.getcwd()) for _ in range(2)]
+        jobs = [make_script(["echo $LSF_BINDIR"], directory=os.getcwd()) for _ in range(2)]
         jobid = LoadSharingFacility.bsub(jobs, name=inspect.stack()[0][3])
         start, timeout = time.time(), False
         while LoadSharingFacility.bjobs(jobid):
@@ -190,7 +184,7 @@ class TestLoadSharingFacility(unittest.TestCase):
                 f = j.replace(".sh", ".log")
                 self.assertTrue(os.path.isfile(f))
                 content = open(f).read().strip()
-                self.assertEqual(os.environ["CCP4_SCR"], content)
+                self.assertEqual(os.environ["LSF_BINDIR"], content)
                 os.unlink(f)
         map(os.unlink, jobs)
         map(os.unlink, glob.glob(u'*.jobs'))
@@ -199,4 +193,3 @@ class TestLoadSharingFacility(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
-

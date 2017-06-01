@@ -58,7 +58,6 @@ class Job(object):
     }
     # Alter functions
     _ALT_F = {
-        "lsf": LoadSharingFacility.bmod,
         "sge": SunGridEngine.qalter,
     }
     

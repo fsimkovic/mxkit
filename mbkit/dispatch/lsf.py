@@ -49,37 +49,23 @@ class LoadSharingFacility(object):
         jobid : int
            The job id to remove
 
-        """
-        cexec(["bkill", str(jobid)])
-        logger.debug("Removed job %d from the queue", jobid)
-
-    @staticmethod
-    def bmod(jobid, priority=None):
-        """Alter a job in the LSF queue
-
-        Parameters
-        ----------
-        jobid : int
-           The job id to remove
-        priority : int, optional
-           The priority level of the job
-
-        Notes
-        -----
-        This function is currently still under development does not provide
-        the full range of ``bmod`` flags.
-
-        Todo
-        ----
-        * Add better debug message to include changed options
+        Raises
+        ------
+        RuntimeError
+           Execution exited with non-zero return code
 
         """
-        cmd = ["bmod"]
-        if priority:
-            cmd += ["-sp", str(priority)]
-        cmd += [str(jobid)]
-        cexec(cmd)
-        logger.debug("Altered parameters for job %d in the queue", jobid)
+        stdout = cexec(["bkill", str(jobid)], permit_nonzero=True)
+        # Large arrays can take time to be full deleted, give it a few moments
+        if "is in progress" in stdout:
+            stdout = cexec(["bkill", "-b", str(jobid)], permit_nonzero=True)
+            import time
+            time.sleep(10)
+        if any(text in stdout for text in ["has already finished", "is being terminated", "is in progress"]):
+            logger.debug("Removed job %d from the queue", jobid)
+        else:
+            msg = "Execution of '{0}' exited with non-zero return code: {1}".format("bkill " + str(jobid), stdout)
+            raise RuntimeError(msg)
 
     @staticmethod
     def bresume(jobid):
@@ -108,8 +94,8 @@ class LoadSharingFacility(object):
         logger.debug("Holding back job %d from the queue", jobid)
 
     @staticmethod
-    def bsub(command, deps=None, directory=None, log=None, name=None, priority=None, queue=None,
-             time=None, threads=None, *args, **kwargs):
+    def bsub(command, deps=None, directory=None, hold=False, log=None, name=None, priority=None, queue=None,
+             runtime=None, shell=None, threads=None, *args, **kwargs):
         """Submit a job to the LSF queue
 
         Parameters
@@ -120,6 +106,8 @@ class LoadSharingFacility(object):
            A list of dependency job ids
         directory : str, optional
            A path to a directory to run the job in
+        hold : bool, optional
+           Submit but __hold__ the job
         log : str, optional
            The path to a logfile for stdout
         name : str, optional
@@ -130,12 +118,12 @@ class LoadSharingFacility(object):
            The priority level of the job
         queue : str, optional
            The queue to submit the job to
+        runtime : int, optional
+           The maximum runtime of the job in seconds
         shell : str, optional
            The absolute path to the shell to run the job in
         threads : int, optional
            The maximum number of threads available to a job
-        time : int, optional
-           The maximum runtime of the job in seconds
 
         Raises
         ------
@@ -154,9 +142,13 @@ class LoadSharingFacility(object):
             cmd += ["-J", "{0}[1-{1}]%{1}".format(name, len(command))]
             # Overwrite some defaults
             command = [array_script]
-            log = os.devnull
+            log = os.devnull        # Reset this!
+            shell = "/bin/bash"     # Required for script!
+            name = None             # Reset this!
         if deps:
             cmd += ["-w", " && ".join(["done(%s)" % dep for dep in map(str, deps)])]
+        if hold:
+            cmd += ["-H"]
         if log:
             cmd += ["-o", log]
         if name:
@@ -165,13 +157,14 @@ class LoadSharingFacility(object):
             cmd += ["-sp", str(priority)]
         if queue:
             cmd += ["-q", queue]
+        if shell:
+            cmd += ["-L", shell]
         if threads:
             cmd += ["-R", '"span[ptile={0}]"'.format(threads)]
-        if time:
-            cmd += ["-W", str(time)]
-        cmd += ["<"] + map(str, command)
+        if runtime:
+            cmd += ["-W", str(runtime)]
         # Submit the job
-        stdout = cexec(cmd, directory=directory)
+        stdout = cexec(cmd, stdin=open(command[0]).read(), directory=directory)
         # Obtain the job id
         jobid = int(stdout.split()[1][1:-1])
         logger.debug("Job %d successfully submitted to the LSF queue", jobid)
