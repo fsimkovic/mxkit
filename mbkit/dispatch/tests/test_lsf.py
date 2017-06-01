@@ -116,7 +116,8 @@ class TestLoadSharingFacility(unittest.TestCase):
 
     def test_bsub_3(self):
         directory = os.getcwd()
-        jobs = [make_script(["sleep 5"], directory=directory) for _ in range(5)]
+        jobs = [make_script([["sleep 5"], ['echo "file {0}"'.format(i)]], directory=directory)
+                for i in range(5)]
         jobid = LoadSharingFacility.bsub(jobs, name=inspect.stack()[0][3])
         start, timeout = time.time(), False
         while LoadSharingFacility.bjobs(jobid):
@@ -131,9 +132,65 @@ class TestLoadSharingFacility(unittest.TestCase):
             map(os.unlink, glob.glob(u'*.script'))
             self.assertEqual(1, 0, "Timeout")
         else:
-            for j in jobs:
+            for i, j in enumerate(jobs):
                 f = j.replace(".sh", ".log")
                 self.assertTrue(os.path.isfile(f))
+                content = open(f).read().strip()
+                self.assertEqual("file {0}".format(i), content)
+                os.unlink(f)
+        map(os.unlink, jobs)
+        map(os.unlink, glob.glob(u'*.jobs'))
+        map(os.unlink, glob.glob(u'*.script'))
+
+    def test_bsub_4(self):
+        directory = os.getcwd()
+        jobs = [make_script(['echo "file {0}"'.format(i)], directory=directory)
+                for i in range(100)]
+        jobid = LoadSharingFacility.bsub(jobs, name=inspect.stack()[0][3])
+        start, timeout = time.time(), False
+        while LoadSharingFacility.bjobs(jobid):
+            # Don't wait too long, one minute, then fail
+            if ((time.time() - start) // 60) >= 1:
+                LoadSharingFacility.bkill(jobid)
+                timeout = True
+            time.sleep(10)
+        if timeout:
+            map(os.unlink, jobs)
+            map(os.unlink, glob.glob(u'*.jobs'))
+            map(os.unlink, glob.glob(u'*.script'))
+            self.assertEqual(1, 0, "Timeout")
+        else:
+            for i, j in enumerate(jobs):
+                f = j.replace(".sh", ".log")
+                self.assertTrue(os.path.isfile(f))
+                content = open(f).read().strip()
+                self.assertEqual("file {0}".format(i), content)
+                os.unlink(f)
+        map(os.unlink, jobs)
+        map(os.unlink, glob.glob(u'*.jobs'))
+        map(os.unlink, glob.glob(u'*.script'))
+
+    def test_bsub_5(self):
+        jobs = [make_script(["echo $CCP4_SCR"], directory=os.getcwd()) for _ in range(2)]
+        jobid = LoadSharingFacility.bsub(jobs, name=inspect.stack()[0][3])
+        start, timeout = time.time(), False
+        while LoadSharingFacility.bjobs(jobid):
+            # Don't wait too long, one minute, then fail
+            if ((time.time() - start) // 60) >= 1:
+                LoadSharingFacility.bkill(jobid)
+                timeout = True
+            time.sleep(10)
+        if timeout:
+            map(os.unlink, jobs)
+            map(os.unlink, glob.glob(u'*.jobs'))
+            map(os.unlink, glob.glob(u'*.script'))
+            self.assertEqual(1, 0, "Timeout")
+        else:
+            for i, j in enumerate(jobs):
+                f = j.replace(".sh", ".log")
+                self.assertTrue(os.path.isfile(f))
+                content = open(f).read().strip()
+                self.assertEqual(os.environ["CCP4_SCR"], content)
                 os.unlink(f)
         map(os.unlink, jobs)
         map(os.unlink, glob.glob(u'*.jobs'))
