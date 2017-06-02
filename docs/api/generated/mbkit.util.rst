@@ -1,5 +1,5 @@
-mbkit.util module
-=================
+mbkit\.util module
+==================
 
 .. automodule:: mbkit.util
     :members:

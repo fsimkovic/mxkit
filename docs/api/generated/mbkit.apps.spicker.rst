@@ -1,5 +1,5 @@
-mbkit.apps.spicker module
-=========================
+mbkit\.apps\.spicker module
+===========================
 
 .. automodule:: mbkit.apps.spicker
     :members:

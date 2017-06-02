@@ -1,5 +1,5 @@
-mbkit.apps.refmac module
-========================
+mbkit\.apps\.refmac module
+==========================
 
 .. automodule:: mbkit.apps.refmac
     :members:

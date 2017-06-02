@@ -13,6 +13,7 @@ Subpackages
 
     mbkit.apps
     mbkit.dispatch
+    mbkit.misc
 
 Submodules
 ----------

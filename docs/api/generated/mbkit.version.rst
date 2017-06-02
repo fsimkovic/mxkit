@@ -1,5 +1,5 @@
-mbkit.version module
-====================
+mbkit\.version module
+=====================
 
 .. automodule:: mbkit.version
     :members:

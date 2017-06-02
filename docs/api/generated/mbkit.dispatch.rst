@@ -1,5 +1,5 @@
-mbkit.dispatch package
-======================
+mbkit\.dispatch package
+=======================
 
 .. automodule:: mbkit.dispatch
     :members:

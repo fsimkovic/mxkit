@@ -1,5 +1,5 @@
-mbkit.apps.molrep module
-========================
+mbkit\.apps\.molrep module
+==========================
 
 .. automodule:: mbkit.apps.molrep
     :members:

@@ -1,7 +1,7 @@
-mbkit\.dispatch\.local module
+mbkit\.misc\.stopwatch module
 =============================
 
-.. automodule:: mbkit.dispatch.local
+.. automodule:: mbkit.misc.stopwatch
     :members:
     :undoc-members:
     :show-inheritance:

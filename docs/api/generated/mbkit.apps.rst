@@ -1,5 +1,5 @@
-mbkit.apps package
-==================
+mbkit\.apps package
+===================
 
 .. automodule:: mbkit.apps
     :members:

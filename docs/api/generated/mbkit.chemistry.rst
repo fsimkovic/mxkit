@@ -1,5 +1,5 @@
-mbkit.chemistry module
-======================
+mbkit\.chemistry module
+=======================
 
 .. automodule:: mbkit.chemistry
     :members:

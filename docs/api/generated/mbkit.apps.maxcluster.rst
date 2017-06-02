@@ -1,5 +1,5 @@
-mbkit.apps.maxcluster module
-============================
+mbkit\.apps\.maxcluster module
+==============================
 
 .. automodule:: mbkit.apps.maxcluster
     :members:

@@ -1,5 +1,5 @@
-mbkit.dispatch.cexectools module
-================================
+mbkit\.dispatch\.cexectools module
+==================================
 
 .. automodule:: mbkit.dispatch.cexectools
     :members:

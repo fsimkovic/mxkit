@@ -1,5 +1,5 @@
-mbkit.dispatch.lsf module
-=========================
+mbkit\.dispatch\.lsf module
+===========================
 
 .. automodule:: mbkit.dispatch.lsf
     :members:

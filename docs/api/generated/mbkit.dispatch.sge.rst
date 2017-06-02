@@ -1,5 +1,5 @@
-mbkit.dispatch.sge module
-=========================
+mbkit\.dispatch\.sge module
+===========================
 
 .. automodule:: mbkit.dispatch.sge
     :members:
