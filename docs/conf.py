@@ -195,10 +195,10 @@ html_short_title = 'MbKit'
 # The style sheet to use for HTML and HTML Help pages. A file of that name
 # must exist either in Sphinx' static/ path, or in one of the custom paths
 # given in html_static_path
-# html_style = 'custom.css'
-# 
-# def setup(app):
-#     app.add_stylesheet("custom.css")
+#html_style = 'my-styles.css'
+
+def setup(app):
+    app.add_stylesheet("custom.css")
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
