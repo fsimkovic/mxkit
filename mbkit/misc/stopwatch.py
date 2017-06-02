@@ -70,7 +70,7 @@ class StopWatch(object):
         if self._running:
             logger.warning("Timer already running!")
         else:
-            logger.info("Starting timer ...")
+            logger.debug("Starting timer ...")
             self._start_time = time.time()
             self._locked = False
             self._running = True
@@ -78,7 +78,7 @@ class StopWatch(object):
     def stop(self):
         """Stop the timer"""
         if self._running:
-            logger.info("Stopping timer ...")
+            logger.debug("Stopping timer ...")
             self._stop_time = time.time()
             self._locked = True
             self._running = False
