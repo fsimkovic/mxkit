@@ -3,7 +3,7 @@
 # You can install all dependencies in one go:
 #     pip install -r doc-requirements.txt
 #
-sphinx
+sphinx >= 1.6
 sphinx-autobuild
 sphinx_bootstrap_theme
 numpydoc
