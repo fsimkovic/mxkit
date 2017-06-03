@@ -14,5 +14,6 @@ Submodules
    mbkit.dispatch.cexectools
    mbkit.dispatch.local
    mbkit.dispatch.lsf
+   mbkit.dispatch.platform
    mbkit.dispatch.sge
 

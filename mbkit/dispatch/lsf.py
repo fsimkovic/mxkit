@@ -8,11 +8,12 @@ import logging
 import os
 
 from mbkit.dispatch.cexectools import cexec, prep_array_scripts
+from mbkit.dispatch.platform import Platform
 
 logger = logging.getLogger(__name__)
 
 
-class LoadSharingFacility(object):
+class LoadSharingFacility(Platform):
     """Object to handle the Load Sharing Facility (LSF) management platform"""
 
     @staticmethod
