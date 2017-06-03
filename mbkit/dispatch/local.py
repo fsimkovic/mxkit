@@ -6,15 +6,15 @@ __version__ = "0.1"
 
 import logging
 import multiprocessing
-import os
 import time
 
 from mbkit.dispatch.cexectools import cexec
+from mbkit.dispatch.platform import Platform
 
 logger = logging.getLogger(__name__)
 
 
-class Worker(multiprocessing.Process):
+class _Worker(multiprocessing.Process):
     """Simple manual worker class to execute jobs in the queue"""
 
     def __init__(self, queue, directory=None, permit_nonzero=False):
@@ -30,7 +30,7 @@ class Worker(multiprocessing.Process):
            Allow non-zero return codes [default: False]
 
         """
-        super(Worker, self).__init__()
+        super(_Worker, self).__init__()
         self.directory = directory
         self.permit_nonzero = permit_nonzero
         self.queue = queue
@@ -46,7 +46,8 @@ class Worker(multiprocessing.Process):
 # Store a reference to the Workers
 WORKERS = None
 
-class LocalJobServer(object):
+
+class LocalJobServer(Platform):
     """A local server to execute jobs via the multiprocessing module
     
     Examples
@@ -61,9 +62,9 @@ class LocalJobServer(object):
     ...     make_python_script(["import sys;", "print('hello');", "sys.exit(0);"])
     ...     for _ in range(3)
     ... ]
-    >>> LocalJobServer.jsub(scripts, nproc=2)
+    >>> LocalJobServer.sub(scripts, nproc=2)
 
-    This will create three Python script files and execute them by calling :func:`sub <LocalJobServer.sub>`. 
+    This will create three Python script files and execute them by calling :func:`sub <LocalJobServer.sub>`.
     
     Sometimes you might want to submit many jobs where you know that some are going to fail. In this 
     case, you can also use the :obj:`LocalJobServer` and provide the ``permit_nonzero`` keyword argument,
@@ -72,7 +73,7 @@ class LocalJobServer(object):
     """
 
     @staticmethod
-    def jdel(jobid):
+    def kill(jobid):
         """Remove a job from the local process list
         
         Parameters
@@ -90,7 +91,7 @@ class LocalJobServer(object):
             logger.debug("Job %d not in queue", jobid)
 
     @staticmethod
-    def jstat(jobid):
+    def stat(jobid):
         """Obtain information about a job id
         
         Parameters
@@ -105,7 +106,7 @@ class LocalJobServer(object):
             return {}
 
     @staticmethod
-    def jsub(command, directory=None, nproc=1, permit_nonzero=False, *args, **kwargs):
+    def sub(command, directory=None, nproc=1, permit_nonzero=False, *args, **kwargs):
         """Submission function for local job submission via ``multiprocessing``
         
         Parameters
@@ -129,7 +130,7 @@ class LocalJobServer(object):
         global WORKERS
         WORKERS = workers = []
         for _ in range(nproc):
-            wp = Worker(queue, directory=directory, permit_nonzero=permit_nonzero)
+            wp = _Worker(queue, directory=directory, permit_nonzero=permit_nonzero)
             wp.start()
             workers.append(wp)
         # Add each command to the queue

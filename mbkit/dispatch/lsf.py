@@ -16,32 +16,20 @@ class LoadSharingFacility(object):
     """Object to handle the Load Sharing Facility (LSF) management platform"""
 
     @staticmethod
-    def bjobs(jobid):
-        """Obtain information about a job id
-         
+    def hold(jobid):
+        """Hold a job in the LSF queue
+
         Parameters
         ----------
         jobid : int
            The job id to remove
 
-        Returns
-        -------
-        dict
-           A dictionary with job specific data
-        
-        Todo
-        ----
-        * Extract the correct information
-    
         """
-        stdout = cexec(["bjobs", "-l", str(jobid)])
-        if "Done successfully" in stdout:
-            return {}
-        else:
-            return {'job_number': jobid, 'status': "Running"}
+        cexec(["bstop", str(jobid)])
+        logger.debug("Holding back job %d from the queue", jobid)
 
     @staticmethod
-    def bkill(jobid):
+    def kill(jobid):
         """Remove a job from the LSF queue
         
         Parameters
@@ -68,7 +56,7 @@ class LoadSharingFacility(object):
             raise RuntimeError(msg)
 
     @staticmethod
-    def bresume(jobid):
+    def rls(jobid):
         """Release a job from the LSF queue
 
         Parameters
@@ -81,21 +69,33 @@ class LoadSharingFacility(object):
         logger.debug("Released job %d from the queue", jobid)
 
     @staticmethod
-    def bstop(jobid):
-        """Hold a job in the LSF queue
+    def stat(jobid):
+        """Obtain information about a job id
 
         Parameters
         ----------
         jobid : int
            The job id to remove
 
+        Returns
+        -------
+        dict
+           A dictionary with job specific data
+
+        Todo
+        ----
+        * Extract the correct information
+
         """
-        cexec(["bstop", str(jobid)])
-        logger.debug("Holding back job %d from the queue", jobid)
+        stdout = cexec(["bjobs", "-l", str(jobid)])
+        if "Done successfully" in stdout:
+            return {}
+        else:
+            return {'job_number': jobid, 'status': "Running"}
 
     @staticmethod
-    def bsub(command, deps=None, directory=None, hold=False, log=None, name=None, priority=None, queue=None,
-             runtime=None, shell=None, threads=None, *args, **kwargs):
+    def sub(command, deps=None, directory=None, hold=False, log=None, name=None, priority=None, queue=None,
+            runtime=None, shell=None, threads=None, *args, **kwargs):
         """Submit a job to the LSF queue
 
         Parameters

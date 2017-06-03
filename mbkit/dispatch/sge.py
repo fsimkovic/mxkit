@@ -9,15 +9,16 @@ import os
 import re
 
 from mbkit.dispatch.cexectools import cexec, prep_array_scripts
+from mbkit.dispatch.platform import Platform
 
 logger = logging.getLogger(__name__)
 
 
-class SunGridEngine(object):
+class SunGridEngine(Platform):
     """Object to handle the Sun Grid Engine (SGE) management platform"""
 
     @staticmethod
-    def qalter(jobid, priority=None):
+    def alt(jobid, priority=None):
         """Alter a job in the SGE queue
         
         Parameters
@@ -46,7 +47,20 @@ class SunGridEngine(object):
         logger.debug("Altered parameters for job %d in the queue", jobid)
 
     @staticmethod
-    def qdel(jobid):
+    def hold(jobid):
+        """Hold a job in the SGE queue
+
+        Parameters
+        ----------
+        jobid : int
+           The job id to remove
+
+        """
+        cexec(["qhold", str(jobid)])
+        logger.debug("Holding back job %d from the queue", jobid)
+
+    @staticmethod
+    def kill(jobid):
         """Remove a job from the SGE queue
         
         Parameters
@@ -59,20 +73,7 @@ class SunGridEngine(object):
         logger.debug("Removed job %d from the queue", jobid)
 
     @staticmethod
-    def qhold(jobid):
-        """Hold a job in the SGE queue
-        
-        Parameters
-        ----------
-        jobid : int
-           The job id to remove
-
-        """
-        cexec(["qhold", str(jobid)])
-        logger.debug("Holding back job %d from the queue", jobid)
-
-    @staticmethod
-    def qrls(jobid):
+    def rls(jobid):
         """Release a job from the SGE queue
         
         Parameters
@@ -85,7 +86,7 @@ class SunGridEngine(object):
         logger.debug("Released job %d from the queue", jobid)
 
     @staticmethod
-    def qstat(jobid):
+    def stat(jobid):
         """Obtain information about a job id
 
         Parameters
@@ -115,8 +116,8 @@ class SunGridEngine(object):
         return data
 
     @staticmethod
-    def qsub(command, deps=None, directory=None, hold=False, log=None, name=None, pe_opts=None,
-             priority=None, queue=None, runtime=None, shell=None, threads=None, *args, **kwargs):
+    def sub(command, deps=None, directory=None, hold=False, log=None, name=None, pe_opts=None,
+            priority=None, queue=None, runtime=None, shell=None, threads=None, *args, **kwargs):
         """Submit a job to the SGE queue
 
         Parameters

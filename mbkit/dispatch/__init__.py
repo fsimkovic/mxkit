@@ -1,20 +1,12 @@
 """Dispatcher module for easy job submission to local machines or job management systems"""
 
 __author__ = "Felix Simkovic"
-__date__ = "24 May 2017"
-__version__ = "0.2"
+__date__ = "03 Jun 2017"
+__version__ = "0.3"
 
 import logging
 import os
 import time
-import warnings
-
-from mbkit.dispatch.local import LocalJobServer
-from mbkit.dispatch.lsf import LoadSharingFacility
-from mbkit.dispatch.sge import SunGridEngine
-
-# Keep track of which platforms we can handle
-KNOWN_PLATFORMS = ["local", "lsf", "sge"]
 
 logger = logging.getLogger(__name__)
 
@@ -26,41 +18,8 @@ class Job(object):
     platforms with a unified interface.
     
     """
-    __slots__ = ["_lock", "_log", "_pid", "_qtype", "_script"]
-    
-    # Submission functions
-    _SUB_F = {
-        "local": LocalJobServer.jsub,
-        "lsf": LoadSharingFacility.bsub,
-        "sge": SunGridEngine.qsub,
-    }
-    # Kill functions
-    _KILL_F = {
-        "local": LocalJobServer.jdel,
-        "lsf": LoadSharingFacility.bkill,
-        "sge": SunGridEngine.qdel,
-    }
-    # Info functions
-    _STAT_F = {
-        "local": LocalJobServer.jstat,
-        "lsf": LoadSharingFacility.bjobs,
-        "sge": SunGridEngine.qstat,
-    }
-    # Hold functions
-    _HOLD_F = {
-        "lsf": LoadSharingFacility.bstop,
-        "sge": SunGridEngine.qhold,
-    }
-    # Release functions
-    _RLS_F = {
-        "lsf": LoadSharingFacility.bresume,
-        "sge": SunGridEngine.qrls,
-    }
-    # Alter functions
-    _ALT_F = {
-        "sge": SunGridEngine.qalter,
-    }
-    
+    __slots__ = ["_lock", "_log", "_pid", "_platform", "_qtype", "_script"]
+
     def __init__(self, qtype):
         """Instantiate a new :obj:`Job` submission class
         
@@ -78,14 +37,24 @@ class Job(object):
         self._lock = False
         self._pid = None
         self._log = []
+        self._platform = None
+        self._qtype = None
         self._script = []
 
         # Check immediately if we have a known platform
-        if qtype.lower() in KNOWN_PLATFORMS:
-            self._qtype = qtype.lower()
+        self._qtype = qtype.lower()
+        if self._qtype == "local":
+            from mbkit.dispatch.local import LocalJobServer
+            self._platform = LocalJobServer
+        elif self._qtype == "lsf":
+            from mbkit.dispatch.lsf import LoadSharingFacility
+            self._platform = LoadSharingFacility
+        elif self._qtype == "sge":
+            from mbkit.dispatch.sge import SunGridEngine
+            self._platform = SunGridEngine
         else:
             raise ValueError("Unknown platform")
-        
+
     def __del__(self):
         """Delete the last reference to this class
 
@@ -106,7 +75,6 @@ class Job(object):
     @property
     def finished(self):
         """Return whether the job has finished"""
-        # Empty dictionaries default to False
         return not bool(self.stat())
 
     @property
@@ -138,33 +106,20 @@ class Job(object):
            The priority level of the job
         
         """
-        alt_func = Job._ALT_F.get(self.qtype, None)
-        if self.pid and callable(alt_func):
-            return alt_func(self.pid, priority=priority)
-        else:
-            logger.debug("Function unavailable for specified queue type")
-    
+        return self._platform.alt(self.pid, priority=priority)
+
     def hold(self):
         """Hold the job"""
-        hold_func = Job._HOLD_F.get(self.qtype, None)
-        if self.pid and callable(hold_func):
-            return hold_func(self.pid)
-        else:
-            logger.debug("Function unavailable for specified queue type")
-    
+        return self._platform.hold(self.pid)
+
     def kill(self):
         """Kill the job"""
-        if self.pid:
-            Job._KILL_F[self.qtype](self.pid)
-    
+        return self._platform.kill(self.pid)
+
     def release(self):
         """Release the job"""
-        rls_func = Job._RLS_F.get(self.qtype, None)
-        if self.pid and callable(rls_func):
-            return rls_func(self.pid)
-        else:
-            logger.debug("Function unavailable for specified queue type")
-    
+        return self._platform.rls(self.pid)
+
     def submit(self, script, *args, **kwargs):
         """Submit a job to the job management platform
     
@@ -205,19 +160,14 @@ class Job(object):
             raise ValueError("One or more scripts cannot be found or are not executable")
         
         # Get the submission function and submit the job
-        self._pid = Job._SUB_F[self.qtype](script, **kwargs)
+        self._pid = self._platform.sub(script, **kwargs)
         # Lock this Job so we cannot submit another
         self._lock = True
     
     def stat(self):
         """Get some data for the job"""
-        stat_func = Job._STAT_F.get(self.qtype, None)
-        if callable(stat_func):
-            return stat_func(self.pid)
-        else:
-            logger.debug("Function unavailable for specified queue type")
-            return {}
-        
+        return self._platform.stat(self.pid)
+
     def wait(self, check_success=None, interval=30, monitor=None):
         """Wait until all processing has finished
         

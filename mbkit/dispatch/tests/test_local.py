@@ -15,19 +15,19 @@ import mbkit.util
 
 class TestLocalJobServer(unittest.TestCase):
 
-    def test_jsub_1(self):
+    def test_sub_1(self):
         j = mbkit.apps.make_python_script([
             ["import sys, time"], 
             ["print(\"I am job: 1\")"],
             ["sys.exit(0)"],
         ], prefix="unittest")
         l = j.rsplit('.', 1)[0] + '.log'
-        mbkit.dispatch.local.LocalJobServer.jsub([j], nproc=1)
+        mbkit.dispatch.local.LocalJobServer.sub([j], nproc=1)
         time.sleep(0.5)
         self.assertTrue(os.path.isfile(l))
         for f in [j, l]: os.unlink(f)
 
-    def test_jsub_2(self):
+    def test_sub_2(self):
         jobs = [
             mbkit.apps.make_python_script([
                 ["import sys, time"], 
@@ -36,7 +36,7 @@ class TestLocalJobServer(unittest.TestCase):
             ], prefix="unittest") for i in range(6)
         ]
         logs = [j.rsplit('.', 1)[0] + '.log' for j in jobs]
-        mbkit.dispatch.local.LocalJobServer.jsub(jobs, nproc=2)
+        mbkit.dispatch.local.LocalJobServer.sub(jobs, nproc=2)
         time.sleep(0.5)
         self.assertTrue(os.path.isfile(logs[-1]))
         for f in jobs + logs: os.unlink(f)
