@@ -10,84 +10,199 @@ import datetime
 import logging
 import time
 
-logging.basicConfig(level=logging.DEBUG)
-
 logger = logging.getLogger(__name__)
 
 
-class StopWatch(object):
-    """This class provides simple stopwatch functionality.
+class _Time(object):
+    """Generic time class"""
+    def __init__(self, index):
+        """Instantiate a new :obj:`Lap`"""
+        self.index = index
+        self._start_time = 0.0
+        self._end_time = 0.0
 
-    You can :func:`lap <StopWatch.lap>` times, i.e. see
-    individual subroutines and measure their time.
+    def __repr__(self):
+        return "{0}(index={1} time={2}s)".format(
+            self.__class__.__name__, self.index, self.time)
 
-    Examples
-    --------
-    >>> import time
-    >>> from mbkit.misc.stopwatch import StopWatch
-    >>> watch = StopWatch()
-    >>> watch.start()
-    >>> time.sleep(5)       # Some processing here
-    >>> watch.stop()
-    >>> StopWatch.convert(watch.runtime())
-    (0, 0, 0, 5)
+    def __add__(self, other):
+        """Add the lap times"""
+        return self.time + other.time
 
-    """
-
-    def __init__(self):
-        """Instantiate a new :obj:`StopWatch`"""
-        self.reset()
+    def __sub__(self, other):
+        """Subtract the lap times"""
+        return self.time - other.time
 
     @property
-    def running(self):
-        """Status"""
-        return self._running
+    def time(self):
+        """Time in seconds"""
+        return int(round(self._end_time - self._start_time))
+
+    @property
+    def time_pretty(self):
+        """Convert (seconds) to (days, hours, minutes, seconds)"""
+        d = datetime.datetime(1970, 1, 1) + datetime.timedelta(seconds=self.time)
+        # Leave -1 in day as we start on the first day of the year
+        return d.day - 1, d.hour, d.minute, d.second
+
+
+class _Lap(_Time):
+    """Lap time"""
+    def __init__(self, index):
+        """Instantiate a new :obj:`Lap`"""
+        super(_Lap, self).__init__(index)
+
+
+class _Interval(_Time):
+    """Interval time"""
+
+    def __init__(self, index):
+        """Instantiate a new :obj:`Interval`"""
+        super(_Interval, self).__init__(index)
+
+        self._laps = []
+        self._locked = False
+        self._running = False
+
+        self._ilap = 0
+
+    def __getitem__(self, id):
+        """Slice the intervals"""
+        return self._laps[id]
 
     @property
     def lap(self):
-        """Lap time"""
-        self._laps += [time.time() - self._start_time - sum(self._laps)]
-        return int(round(self._laps[-1]))
+        """Take a lap snapshot"""
+        if self._locked:
+            logger.critical("Cannot add a lap, interval finished!")
+            return None
+        elif not self._running:
+            logger.critical("Cannot add a lap, interval not running!")
+            return None
+
+        self._ilap += 1
+        lap = _Lap(self._ilap)
+        lap._start_time = self._start_time + sum([l.time for l in self._laps])
+        lap._end_time = time.time()
+        self._laps += [lap]
+
+        return lap
 
     @property
-    def runtime(self):
-        """Total runtime in seconds"""
+    def laps(self):
+        """The laps"""
+        return self._laps
+
+    @property
+    def nlaps(self):
+        """Number of laps"""
+        return len(self._laps)
+
+    @property
+    def time(self):
+        """Total runtime"""
         if self._running:
             return int(round(time.time() - self._start_time))
         else:
-            return int(round(self._stop_time - self._start_time))
-
-    def reset(self):
-        """Reset the timer"""
-        self._locked = False
-        self._running = False
-        self._laps = []
-        self._start_time = 0.0
-        self._stop_time = 0.0
+            return int(round(self._end_time - self._start_time))
 
     def start(self):
-        """Start the timer"""
+        """Start the interval"""
         if self._running:
-            logger.warning("Timer already running!")
+            logger.warning("Interval is running ...")
+        elif self._locked:
+            logger.warning("Interval is locked ...")
         else:
-            logger.debug("Starting timer ...")
+            logger.debug("Starting new interval ...")
             self._start_time = time.time()
-            self._locked = False
             self._running = True
 
     def stop(self):
-        """Stop the timer"""
+        """Stop the interval"""
         if self._running:
-            logger.debug("Stopping timer ...")
-            self._stop_time = time.time()
-            self._locked = True
+            logger.debug("Stopping interval ...")
+            self._end_time = time.time()
             self._running = False
+            self._locked = True
         else:
-            logger.warning("Timer not running!")
+            logger.warning("Interval not running!")
 
-    @staticmethod
-    def convert(runtime):
+
+class StopWatch(_Time):
+    """Stopwatch class"""
+
+    def __init__(self):
+        """Instantiate a new :obj:`StopWatch`"""
+        super(StopWatch, self).__init__(1)
+        self.reset()
+
+    def __getitem__(self, id):
+        """Slice the intervals"""
+        return self._intervals[id]
+
+    def __repr__(self):
+        return "{0}(time={1}s intervals={2})".format(
+            self.__class__.__name__, self.time, len(self._intervals)
+        )
+
+    @property
+    def intervals(self):
+        """The intervals taken"""
+        return self._intervals
+
+    @property
+    def lap(self):
+        """Take a lap snapshot"""
+        if not self._running:
+            logger.critical("Cannot add a lap, stopwatch not running!")
+            return None
+        return self._intervals[-1].lap
+
+    @property
+    def nintervals(self):
+        """Number of intervals"""
+        return len(self._intervals)
+
+    @property
+    def running(self):
+        """Stopwatch status"""
+        return self._running
+
+    @property
+    def time(self):
+        """Time in seconds"""
+        return sum([interval.time for interval in self._intervals])
+
+    @property
+    def time_pretty(self):
         """Convert (seconds) to (days, hours, minutes, seconds)"""
-        d = datetime.datetime(1970, 1, 1) + datetime.timedelta(seconds=runtime)
+        d = datetime.datetime(1970, 1, 1) + datetime.timedelta(seconds=self.time)
         # Leave -1 in day as we start on the first day of the year
         return d.day - 1, d.hour, d.minute, d.second
+
+    def reset(self):
+        """Reset the timer"""
+        self._intervals = []
+        self._running = False
+        self._iinterval = 0
+
+    def start(self):
+        """Start the interval"""
+        if self._running:
+            logger.warning("Stopwatch already running!")
+        else:
+            logger.debug("Starting stopwatch ...")
+            self._iinterval += 1
+            interval = _Interval(self._iinterval)
+            interval.start()
+            self._intervals += [interval]
+            self._running = True
+
+    def stop(self):
+        """Stop the interval"""
+        if self._running:
+            logger.debug("Stopping stopwatch ...")
+            self._intervals[-1].stop()
+            self._running = False
+        else:
+            logger.warning("Stopwatch not running!")
