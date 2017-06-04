@@ -23,8 +23,6 @@ from Bio.Application import _Option
 from Bio.Application import _Switch
 from Bio.Application import _escape_filename
 
-from pyjob.dispatch import cexec
-
 
 class AbstractCommandline(AbstractCommandline):
     """Extension to the original :obj:`AbstractCommandline <Bio.Application.AbstractCommandline>`"""
@@ -33,17 +31,6 @@ class AbstractCommandline(AbstractCommandline):
         """Initialise a new :obj:`AbstractCommandline`"""
         cmd = AbstractCommandline.find_exec(cmd)
         super(AbstractCommandline, self).__init__(cmd, **kwargs)
-
-    def __call__(self, *args, **kwargs):
-        """Overwrite parent __call__
-        
-        Returns
-        -------
-        str
-           STDOUT
-        
-        """
-        return cexec(self._as_list(), *args, **kwargs)
 
     def _as_list(self):
         """Return the command line as list"""

@@ -5,7 +5,4 @@
 #       pip install -r requirements.txt
 
 setuptools
-# Require this to be Python2.6 compatible for now
-biopython ==1.66
-http://github.com/fsimkovic/pyjob/tarball/master#egg
-
+biopython ==1.69
