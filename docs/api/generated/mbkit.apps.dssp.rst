@@ -1,5 +1,5 @@
-mbkit\.apps\.dssp module
-========================
+mbkit.apps.dssp module
+======================
 
 .. automodule:: mbkit.apps.dssp
     :members:

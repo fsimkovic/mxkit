@@ -12,8 +12,6 @@ Subpackages
 .. toctree::
 
     mbkit.apps
-    mbkit.dispatch
-    mbkit.misc
 
 Submodules
 ----------
@@ -21,6 +19,5 @@ Submodules
 .. toctree::
 
    mbkit.chemistry
-   mbkit.util
    mbkit.version
 

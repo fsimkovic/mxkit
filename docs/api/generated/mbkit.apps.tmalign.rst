@@ -1,5 +1,5 @@
-mbkit\.apps\.tmalign module
-===========================
+mbkit.apps.tmalign module
+=========================
 
 .. automodule:: mbkit.apps.tmalign
     :members:

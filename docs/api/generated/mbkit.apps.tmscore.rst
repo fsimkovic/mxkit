@@ -1,5 +1,5 @@
-mbkit\.apps\.tmscore module
-===========================
+mbkit.apps.tmscore module
+=========================
 
 .. automodule:: mbkit.apps.tmscore
     :members:

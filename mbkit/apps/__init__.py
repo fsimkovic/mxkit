@@ -23,14 +23,7 @@ from Bio.Application import _Option
 from Bio.Application import _Switch
 from Bio.Application import _escape_filename
 
-import mbkit.dispatch.cexectools
-import mbkit.util
-
-# OS-dependent script headers and extensions
-if sys.platform.startswith('win'):
-    EXE_EXT, SCRIPT_HEADER, SCRIPT_EXT = ('.exe', '', '.bat')
-else:
-    EXE_EXT, SCRIPT_HEADER, SCRIPT_EXT = ('', '#!/bin/bash', '.sh')
+from pyjob.dispatch import cexec
 
 
 class AbstractCommandline(AbstractCommandline):
@@ -49,12 +42,8 @@ class AbstractCommandline(AbstractCommandline):
         str
            STDOUT
         
-        See Also
-        --------
-        mbkit.dispatch.cexectools.cexec
-        
         """
-        return mbkit.dispatch.cexectools.cexec(self._as_list(), *args, **kwargs)
+        return cexec(self._as_list(), *args, **kwargs)
 
     def _as_list(self):
         """Return the command line as list"""
@@ -143,78 +132,3 @@ class Switch(_Switch):
         else:
             return []
 
-
-def make_script(cmd, directory=None, prefix="tmp", stem=None, suffix=SCRIPT_EXT):
-    """Create an executable script
-    
-    Parameters
-    ----------
-    cmd : list
-       The command to be written to the script. This can be a 1-dimensional 
-       or 2-dimensional list, depending on the commands to run.
-    directory : str, optional
-       The directory to create the script in
-    prefix : str, optional
-       The script prefix [default: None]
-    stem : str, optional
-       The steam part of the script name
-    suffix : str, optional
-       The script suffix [default: POSIX - ``.sh``, Windows - ``.bat``]
-    
-    Returns
-    -------
-    str
-       The path to the script
-
-    """
-    # Get the script name
-    script = mbkit.util.tmp_fname(delete=True, directory=directory, prefix=prefix, stem=stem, suffix=suffix)
-    # Write the contents to the file
-    with open(script, 'w') as f_out:
-        content = SCRIPT_HEADER + os.linesep
-        if isinstance(cmd, list) and isinstance(cmd[0], list):
-            for c in cmd:
-                content += ' '.join(map(str, c)) + os.linesep
-        elif isinstance(cmd, list):
-            content += ' '.join(map(str, cmd)) + os.linesep
-        f_out.write(content)
-    os.chmod(script, 0o777)
-    return script
-
-
-def make_python_script(cmd, directory=None, prefix="tmp", stem=None, suffix='.py'):
-    """Create an executable Python script
-
-    Parameters
-    ----------
-    cmd : list
-       The command to be written to the script. This can be a 1-dimensional 
-       or 2-dimensional list, depending on the Python commands to run.
-    directory : str, optional
-       The directory to create the script in
-    prefix : str, optional
-       The script prefix [default: None]
-    stem : str, optional
-       The steam part of the script name
-    suffix : str, optional
-       The script suffix [default: ``.py``]
-
-    Returns
-    -------
-    str
-       The path to the script
-
-    """
-    # Get the script name
-    script = mbkit.util.tmp_fname(delete=True, directory=directory, prefix=prefix, stem=stem, suffix=suffix)
-    # Write the contents to the file
-    with open(script, 'w') as f_out:
-        content = "#!/usr/bin/env python" + os.linesep
-        if isinstance(cmd, list) and isinstance(cmd[0], list):
-            for c in cmd:
-                content += ' '.join(map(str, c)) + os.linesep
-        elif isinstance(cmd, list):
-            content += ' '.join(map(str, cmd)) + os.linesep
-        f_out.write(content)
-    os.chmod(script, 0o777)
-    return script

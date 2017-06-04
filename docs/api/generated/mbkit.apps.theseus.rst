@@ -1,5 +1,5 @@
-mbkit\.apps\.theseus module
-===========================
+mbkit.apps.theseus module
+=========================
 
 .. automodule:: mbkit.apps.theseus
     :members:
