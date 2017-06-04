@@ -57,7 +57,7 @@ if not PYTHON_EXE:
 AUTHOR = "Felix Simkovic"
 AUTHOR_EMAIL = "felixsimkovic@me.com"
 DESCRIPTION = __doc__.replace("\n", "")
-DEPENDENCIES = dependencies()
+DEPENDENCIES, DEPENDENCY_LINKS = dependencies()
 LICENSE = "BSD License"
 LONG_DESCRIPTION = readme()
 PACKAGE_DIR = "mbkit"
@@ -101,6 +101,7 @@ setup(
     packages=PACKAGES,
     package_dir={PACKAGE_NAME: PACKAGE_DIR},
     install_requires=DEPENDENCIES,
+    dependency_links=DEPENDENCY_LINKS,
     platforms=PLATFORMS,
     classifiers=CLASSIFIERS,
     test_suite='nose.collector',
