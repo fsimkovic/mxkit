@@ -63,7 +63,6 @@ VERSION = version()
 PACKAGES = [
     'mbkit', 
     'mbkit/apps',
-    'mbkit/dispatch',
 ]
 
 CLASSIFIERS = [
