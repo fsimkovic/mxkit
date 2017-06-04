@@ -7,4 +7,5 @@
 setuptools
 # Require this to be Python2.6 compatible for now
 biopython ==1.66
+http://github.com/fsimkovic/pyjob/tarball/master#egg
 

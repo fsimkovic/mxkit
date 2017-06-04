@@ -11,9 +11,15 @@ import sys
 # ==============================================================
 
 def dependencies():
-    with open('requirements.txt', 'r') as f_in:
-        return [l for l in f_in.read().rsplit(os.linesep) 
-                if l and not l.startswith("#")]
+    modules, links = [], []
+    for line in open('requirements.txt', 'r'):
+        if line.startswith("#"):
+            continue
+        elif line.startswith("http"):
+            links.append(line.strip())
+        else:
+            modules.append(line.strip())
+    return modules, links
 
 
 def readme():
