@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# MbKit documentation build configuration file, created by
+# MxKit documentation build configuration file, created by
 # sphinx-quickstart on Thu May 26 11:57:09 2016.
 #
 # This file is execfile()d with the current directory set to its
@@ -56,9 +56,9 @@ except ImportError:
     raise ImportError(msg)
 
 try:
-    import mbkit.version 
+    import mxkit.version 
 except ImportError:
-    msg = "Error: MbKit must be installed before generating its documentation"
+    msg = "Error: MxKit must be installed before generating its documentation"
     raise ImportError(msg)
 
 
@@ -75,12 +75,12 @@ source_encoding = 'utf-8'
 master_doc = 'index'
 
 # General information about the project.
-project = 'MbKit'
+project = 'MxKit'
 copyright = '2016-2017, University of Liverpool'
 author = 'Felix Simkovic'
 
 # The short X.Y version.
-version = mbkit.version.__version__
+version = mxkit.version.__version__
 # The full version, including alpha/beta/rc tags.
 release = version
 
@@ -170,7 +170,7 @@ html_theme_options = {
 # Additional variables to be passed to templates
 html_context = {
     # URL to the GitHub repository - None if unwanted
-    'github_url': 'https://github.com/rigdenlab/mbkit.git',
+    'github_url': 'https://github.com/rigdenlab/mxkit.git',
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
@@ -178,10 +178,10 @@ html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
-html_title = 'MbKit v{0}'.format(version)
+html_title = 'MxKit v{0}'.format(version)
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-html_short_title = 'MbKit'
+html_short_title = 'MxKit'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
@@ -267,7 +267,7 @@ html_show_copyright = True
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'MbKitdoc'
+htmlhelp_basename = 'MxKitdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -316,7 +316,7 @@ htmlhelp_basename = 'MbKitdoc'
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, '', u'MbKit Documentation',
+    (master_doc, '', u'MxKit Documentation',
      [author], 1)
 ]
 
@@ -330,8 +330,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'MbKit', u'MbKit Documentation',
-     author, 'MbKit', 'One line description of project.',
+    (master_doc, 'MxKit', u'MxKit Documentation',
+     author, 'MxKit', 'One line description of project.',
      'Miscellaneous'),
 ]
 

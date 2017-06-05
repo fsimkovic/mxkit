@@ -1,4 +1,4 @@
-# The requirements needed by MbKit
+# The requirements needed by MxKit
 #
 # You can install all dependencies in one go:
 #     pip install -r doc-requirements.txt

@@ -1,7 +1,7 @@
-mbkit package
+mxkit package
 =============
 
-.. automodule:: mbkit
+.. automodule:: mxkit
     :members:
     :undoc-members:
     :show-inheritance:
@@ -11,13 +11,13 @@ Subpackages
 
 .. toctree::
 
-    mbkit.apps
+    mxkit.apps
 
 Submodules
 ----------
 
 .. toctree::
 
-   mbkit.chemistry
-   mbkit.version
+   mxkit.chemistry
+   mxkit.version
 

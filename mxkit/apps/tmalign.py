@@ -15,7 +15,7 @@ assume generally the same fold in SCOP/CATH.
 
 Examples
 --------
->>> from mbkit.apps import tmalign
+>>> from mxkit.apps import tmalign
 >>> tm_exe = tmalign.TMalignCommandline(chain1="model1.pdb", chain2="model2.pdb")
 >>> print(tm_exe)
 TMalign model1.pdb model2.pdb
@@ -31,10 +31,10 @@ __author__ = "Felix Simkovic"
 __date__ = "20 Feb 2017"
 __version__ = "0.1"
 
-from mbkit.apps import AbstractCommandline
-from mbkit.apps import Argument
-from mbkit.apps import Option
-from mbkit.apps import Switch
+from mxkit.apps import AbstractCommandline
+from mxkit.apps import Argument
+from mxkit.apps import Option
+from mxkit.apps import Switch
 
 
 class TMalignCommandline(AbstractCommandline):

@@ -7,7 +7,7 @@ models from a pool of protein structure decoys.
 
 Examples
 --------
->>> from mbkit.apps import spicker
+>>> from mxkit.apps import spicker
 >>> spicker_exe = spicker.SpickerCommandline(
 ...     rmsinp='rmsinp', seqdat='seqdat', train='tra.in', reptra=['rep1.tra1']
 ... )
@@ -25,9 +25,9 @@ __author__ = "Felix Simkovic"
 __date__ = "28 Aug 2016"
 __version__ = "0.1"
 
-from mbkit.apps import AbstractCommandline
-from mbkit.apps import Argument
-from mbkit.apps import ArgumentList
+from mxkit.apps import AbstractCommandline
+from mxkit.apps import Argument
+from mxkit.apps import ArgumentList
 
 
 class SpickerCommandline(AbstractCommandline):

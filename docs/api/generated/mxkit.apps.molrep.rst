@@ -1,7 +1,7 @@
-mbkit.apps.phaser module
+mxkit.apps.molrep module
 ========================
 
-.. automodule:: mbkit.apps.phaser
+.. automodule:: mxkit.apps.molrep
     :members:
     :undoc-members:
     :show-inheritance:

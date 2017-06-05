@@ -6,20 +6,20 @@ Installation
 Source Code
 ~~~~~~~~~~~
 
-If you would like to install MbKit from source, download the `latest version <https://github.com/rigdenlab/mbkit/releases>`_ from the GitHub repository. Then, use the following commands to install MbKit.
+If you would like to install MxKit from source, download the `latest version <https://github.com/rigdenlab/mxkit/releases>`_ from the GitHub repository. Then, use the following commands to install MxKit.
 
 .. code-block:: bash
 
-   $> git clone https://github.com/rigdenlab/mbkit
-   $> cd mbkit
+   $> git clone https://github.com/rigdenlab/mxkit
+   $> cd mxkit
 
-If this has completed successfully, you are good to go and you can now install MbKit.
+If this has completed successfully, you are good to go and you can now install MxKit.
 
 .. code-block:: bash
 
    $> sudo python setup.py build install
 
-MbKit is now successfully installed in your system's default Python.
+MxKit is now successfully installed in your system's default Python.
 
 
 External software

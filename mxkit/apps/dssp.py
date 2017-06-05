@@ -2,7 +2,7 @@
 
 Examples
 --------
->>> from mbkit.apps import dssp
+>>> from mxkit.apps import dssp
 >>> dssp_exe = dssp.DsspCommandline(
 ...     "/usr/bin/dssp", input="model.pdb", output="model.dssp"
 ... )
@@ -20,10 +20,10 @@ __author__ = "Felix Simkovic"
 __date__ = "17 May 2017"
 __version__ = "0.1"
 
-from mbkit.apps import AbstractCommandline
-from mbkit.apps import Argument
-from mbkit.apps import Option
-from mbkit.apps import Switch
+from mxkit.apps import AbstractCommandline
+from mxkit.apps import Argument
+from mxkit.apps import Option
+from mxkit.apps import Switch
 
 
 class DsspCommandline(AbstractCommandline):

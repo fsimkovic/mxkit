@@ -13,7 +13,7 @@ Examples
 --------
 1. Run Molrep to do basic molecular replacement (RF + TF):
 
->>> from mbkit.apps import molrep
+>>> from mxkit.apps import molrep
 >>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb")
 >>> print(molrep_exe)
@@ -21,7 +21,7 @@ Examples
 
 2. Run Molrep to do basic molecular replacement (RF + TF) with fixed model:
 
->>> from mbkit.apps import molrep
+>>> from mxkit.apps import molrep
 >>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", fixed_xyzin="model2.pdb")
 >>> print(molrep_exe)
@@ -29,7 +29,7 @@ Examples
 
 3. Run Molrep to do basic MR (RF + TF) with input sequence and redirect output and scratch files:
 
->>> from mbkit.apps import molrep
+>>> from mxkit.apps import molrep
 >>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", seqin="sequence.fasta", outDir="out/", outScr="scr/")
 >>> print(molrep_exe)
@@ -37,7 +37,7 @@ Examples
 
 4. Run Molrep to do self rotation function:
 
->>> from mbkit.apps import molrep
+>>> from mxkit.apps import molrep
 >>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz")
 >>> print(molrep_exe)
@@ -45,7 +45,7 @@ Examples
 
 5. Run Molrep to do multicopy search using one model:
 
->>> from mbkit.apps import molrep
+>>> from mxkit.apps import molrep
 >>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", xyzin2="model.pdb")
 >>> print(molrep_exe)
@@ -53,7 +53,7 @@ Examples
 
 6. Run Molrep to do multicopy search using two models:
 
->>> from mbkit.apps import molrep
+>>> from mxkit.apps import molrep
 >>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", xyzin2="model2.pdb")
 >>> print(molrep_exe)
@@ -61,7 +61,7 @@ Examples
 
 7. Run Molrep to fit two atomic models:
 
->>> from mbkit.apps import molrep
+>>> from mxkit.apps import molrep
 >>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", xyzin="model.pdb", fixed_xyzin="model2.pdb")
 >>> print(molrep_exe)
@@ -69,7 +69,7 @@ Examples
 
 8. Run Molrep to rigid body refinement:
 
->>> from mbkit.apps import molrep
+>>> from mxkit.apps import molrep
 >>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz", fixed_xyzin="model2.pdb")
 >>> print(molrep_exe)
@@ -77,7 +77,7 @@ Examples
 
 9. Run Molrep to do basic MR (RF + TF) with keyword file input:
 
->>> from mbkit.apps import molrep
+>>> from mxkit.apps import molrep
 >>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="data.mtz", xyzin="model.pdb", keyin="keywords.txt")
 >>> print(molrep_exe)
@@ -85,7 +85,7 @@ Examples
 
 10. Run Molrep to fit model to EM map:
 
->>> from mbkit.apps import molrep
+>>> from mxkit.apps import molrep
 >>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", hklin="em.map", xyzin="model.pdb")
 >>> print(molrep_exe)
@@ -93,7 +93,7 @@ Examples
 
 11. Run Molrep to do basic molecular replacement (RF + TF) with input through stdin:
 
->>> from mbkit.apps import molrep
+>>> from mxkit.apps import molrep
 >>> molrep_exe = molrep.MolrepCommandline(
 ...     "/usr/bin/molrep", interactive=True, hklin="data.mtz", xyzin="model.pdb")
 >>> print(molrep_exe)
@@ -110,10 +110,10 @@ __author__ = "Felix Simkovic & Ronan Keegan"
 __date__ = "07 Mar 2017"
 __version__ = "0.1"
 
-from mbkit.apps import AbstractCommandline
-from mbkit.apps import Argument
-from mbkit.apps import Option
-from mbkit.apps import Switch
+from mxkit.apps import AbstractCommandline
+from mxkit.apps import Argument
+from mxkit.apps import Option
+from mxkit.apps import Switch
 
 
 class MolrepCommandline(AbstractCommandline):

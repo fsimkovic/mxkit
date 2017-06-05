@@ -9,7 +9,7 @@ Examples
 --------
 1. Run Refmac (note: The command line is constant and the stdin options control how Refmac is run):
 
->>> from mbkit.apps import refmac
+>>> from mxkit.apps import refmac
 >>> refmac_exe = refmac.RefmacCommandline(
 ...     "/usr/bin/refmac5", hklin="data.mtz", hklout="name.mtz", xyzin="data.pdb", xyzout="name.pdb")
 >>> print(refmac_exe)
@@ -26,10 +26,10 @@ __author__ = "Adam Simpkin"
 __date__ = "15 Mar 2017"
 __version__ = "0.1"
 
-from mbkit.apps import AbstractCommandline
-from mbkit.apps import Argument
-from mbkit.apps import Option
-from mbkit.apps import Switch
+from mxkit.apps import AbstractCommandline
+from mxkit.apps import Argument
+from mxkit.apps import Option
+from mxkit.apps import Switch
 
 
 class RefmacCommandline(AbstractCommandline):

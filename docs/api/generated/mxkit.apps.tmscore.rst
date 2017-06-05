@@ -1,7 +1,7 @@
-mbkit.apps.theseus module
+mxkit.apps.tmscore module
 =========================
 
-.. automodule:: mbkit.apps.theseus
+.. automodule:: mxkit.apps.tmscore
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,7 +1,7 @@
-mbkit.version module
+mxkit.version module
 ====================
 
-.. automodule:: mbkit.version
+.. automodule:: mxkit.version
     :members:
     :undoc-members:
     :show-inheritance:

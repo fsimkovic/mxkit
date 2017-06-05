@@ -10,7 +10,7 @@ Examples
 --------
 1. The first option to use maxcluster is to compare two structures, i.e. an experiment and predicted structure:
 
->>> from mbkit.apps import maxcluster
+>>> from mxkit.apps import maxcluster
 >>> maxcluster_exe = maxcluster.MaxclusterCommandline(
 ...     pdb_experiment="experiment.pdb", pdb_prediction="model.pdb")
 >>> print(maxcluster_exe)
@@ -18,7 +18,7 @@ maxcluster -e experiment.pdb -p model.pdb
 
 2. A second option is to invoke maxcluster using a list of models in an all vs all comparisons. Just provide the list file in case you wish to run such a comparison:
 
->>> from mbkit.apps import maxcluster
+>>> from mxkit.apps import maxcluster
 >>> maxcluster_exe = maxcluster.MaxclusterCommandline(
 ...     pdb_list="models.list")
 >>> print(maxcluster_exe)
@@ -26,7 +26,7 @@ maxcluster -l models.list
 
 3. Finally, if you wish to compare a list of models against a single experiment structure, you can use the following syntax to do just that:
 
->>> from mbkit.apps import maxcluster
+>>> from mxkit.apps import maxcluster
 >>> maxcluster_exe = maxcluster.MaxclusterCommandline(
 ...     pdb_list="models.list", pdb_experiment='experiment.pdb')
 >>> print(maxcluster_exe)
@@ -42,9 +42,9 @@ __author__ = "Felix Simkovic"
 __date__ = "30 Aug 2016"
 __version__ = "0.1"
 
-from mbkit.apps import AbstractCommandline
-from mbkit.apps import Option
-from mbkit.apps import Switch
+from mxkit.apps import AbstractCommandline
+from mxkit.apps import Option
+from mxkit.apps import Switch
 
 
 class MaxclusterCommandline(AbstractCommandline):

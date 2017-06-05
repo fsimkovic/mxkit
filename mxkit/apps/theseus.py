@@ -6,7 +6,7 @@ THESEUS: Maximum likelihood multiple superpositioning
 
 Examples
 --------
->>> from mbkit.apps import theseus
+>>> from mxkit.apps import theseus
 >>> theseus_exe = theseus.TheseusCommandline(pdb_files="model1.pdb model2.pdb model3.pdb")
 >>> print(theseus_exe)
 theseus model1.pdb model2.pdb model3.pdb
@@ -25,10 +25,10 @@ __author__ = "Felix Simkovic"
 __date__ = "28 Aug 2016"
 __version__ = "0.1"
 
-from mbkit.apps import AbstractCommandline
-from mbkit.apps import ArgumentList
-from mbkit.apps import Option
-from mbkit.apps import Switch
+from mxkit.apps import AbstractCommandline
+from mxkit.apps import ArgumentList
+from mxkit.apps import Option
+from mxkit.apps import Switch
 
 
 class TheseusCommandline(AbstractCommandline):

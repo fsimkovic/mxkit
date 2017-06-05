@@ -1,4 +1,4 @@
-"""Molecular Biology ToolKit"""
+"""Macromolecular Crystallography ToolKit"""
 
 from distutils.util import convert_path
 from setuptools import setup
@@ -30,7 +30,7 @@ def readme():
 def version():
     # Credits to http://stackoverflow.com/a/24517154
     main_ns = {}
-    ver_path = convert_path('mbkit/version.py')
+    ver_path = convert_path('mxkit/version.py')
     with open(ver_path) as f_in:
         exec(f_in.read(), main_ns)
     return main_ns['__version__']
@@ -60,15 +60,15 @@ DESCRIPTION = __doc__.replace("\n", "")
 DEPENDENCIES, DEPENDENCY_LINKS = dependencies()
 LICENSE = "BSD License"
 LONG_DESCRIPTION = readme()
-PACKAGE_DIR = "mbkit"
-PACKAGE_NAME = "mbkit"
+PACKAGE_DIR = "mxkit"
+PACKAGE_NAME = "mxkit"
 PLATFORMS = ['POSIX', 'Mac OS', 'Windows', 'Unix']
-URL = "http://mbkit.rtfd.org"
+URL = "http://mxkit.rtfd.org"
 VERSION = version()
 
 PACKAGES = [
-    'mbkit', 
-    'mbkit/apps',
+    'mxkit', 
+    'mxkit/apps',
 ]
 
 CLASSIFIERS = [

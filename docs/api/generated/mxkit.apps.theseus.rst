@@ -1,7 +1,7 @@
-mbkit.apps.tmalign module
+mxkit.apps.theseus module
 =========================
 
-.. automodule:: mbkit.apps.tmalign
+.. automodule:: mxkit.apps.theseus
     :members:
     :undoc-members:
     :show-inheritance:

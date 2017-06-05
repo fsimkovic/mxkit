@@ -1,7 +1,7 @@
-mbkit.chemistry module
+mxkit.chemistry module
 ======================
 
-.. automodule:: mbkit.chemistry
+.. automodule:: mxkit.chemistry
     :members:
     :undoc-members:
     :show-inheritance:

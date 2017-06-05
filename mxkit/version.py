@@ -1,4 +1,4 @@
-"""The version number of MbKit is recorded here"""
+"""The version number of MxKit is recorded here"""
 
 # Maintain sematantic versioning. Further information can
 # be found here [http://semver.org/]

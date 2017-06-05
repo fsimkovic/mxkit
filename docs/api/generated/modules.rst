@@ -1,7 +1,7 @@
-mbkit
+mxkit
 =====
 
 .. toctree::
    :maxdepth: 4
 
-   mbkit
+   mxkit

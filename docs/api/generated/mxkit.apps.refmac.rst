@@ -1,7 +1,7 @@
-mbkit.apps.refmac module
+mxkit.apps.refmac module
 ========================
 
-.. automodule:: mbkit.apps.refmac
+.. automodule:: mxkit.apps.refmac
     :members:
     :undoc-members:
     :show-inheritance:
