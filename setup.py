@@ -10,6 +10,7 @@ import sys
 # Functions, functions, functions ...
 # ==============================================================
 
+
 def dependencies():
     modules, links = [], []
     for line in open('requirements.txt', 'r'):
@@ -34,6 +35,7 @@ def version():
     with open(ver_path) as f_in:
         exec(f_in.read(), main_ns)
     return main_ns['__version__']
+
 
 # ==============================================================
 # Determine the Python executable
@@ -67,7 +69,7 @@ URL = "http://mxkit.rtfd.org"
 VERSION = version()
 
 PACKAGES = [
-    'mxkit', 
+    'mxkit',
     'mxkit/apps',
 ]
 
@@ -109,4 +111,3 @@ setup(
     include_package_data=True,
     zip_safe=False,
 )
-
